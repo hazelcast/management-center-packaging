@@ -1,0 +1,59 @@
+name: Publish Hazelcast Management Center packages
+
+on:
+  push:
+    # Push to master updates the latest snapshot (MC_VERSION taken from pom.xml)
+    branches:
+      - master
+    # Push of a matching tag (v*, e.g. v5.0.2) starts build with
+    # - HZ_VERSION extracted from pom.xml
+    # - PACKAGE_VERSION extracted from the tag
+    tags:
+      - 'v*'
+  pull_request:
+    types: [ opened, synchronize, edited ]
+  workflow_dispatch:
+    inputs:
+      MC_VERSION:
+        description: 'Version of Hazelcast Management Center to build the image for, this is the Maven version - e.g.: 5.0.2 or 5.1-SNAPSHOT'
+        required: true
+
+env:
+  EVENT_NAME: ${{ github.event_name }}
+
+# Constant for now - should ensure single build, maybe we can limit this to something from github.*
+concurrency: single-build
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [ '8' ]
+        architecture: [ 'x64' ]
+    env:
+      MC_VERSION: ${{ github.event.inputs.MC_VERSION }}
+      PUBLISH: "true"
+      ARTIFACTORY_SECRET: ${{ secrets.ARTIFACTORY_SECRET }}
+      DEVOPS_PRIVATE_KEY: ${{ secrets.DEVOPS_PRIVATE_KEY }}
+      BINTRAY_PASSPHRASE: ${{ secrets.BINTRAY_PASSPHRASE }}
+    defaults:
+      run:
+        working-directory: ./hazelcast-management-center-packaging
+    outputs:
+      mc_version: ${{ steps.hz_version.outputs.mc_version }}
+      package_version: ${{ steps.package_version.outputs.package_version }}
+    name: Release Automation
+    steps:
+      - name: Checkout hazelcast-command-line repo
+        uses: actions/checkout@v2.3.2
+        with:
+          path: 'hazelcast-management-center-packaging'
+
+      - name: Setup JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+          architecture: ${{ matrix.architecture }}
+
