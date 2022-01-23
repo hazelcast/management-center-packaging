@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.hazelcast</groupId>
+    <artifactId>hazelcast-command-line</artifactId>
+    <version>5.1-SNAPSHOT</version>
+
+    <description>A pom.xml file with repository definitions so we can use maven to fetch tar artifacts.</description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <hazelcast.version>5.1-SNAPSHOT</hazelcast.version>
+        <hazelcast.mc.version>5.1-SNAPSHOT</hazelcast.mc.version>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>oss-sonatype</id>
+            <name>oss-sonatype</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>hazelcast-private-repository</id>
+            <name>Hazelcast Private Repository</name>
+            <url>https://repository.hazelcast.com/release/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>hazelcast-private-snapshot-repository</id>
+            <name>Hazelcast Private Snapshot Repository</name>
+            <url>https://repository.hazelcast.com/snapshot/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>hazelcast-devel-repository</id>
+            <name>Hazelcast Private Development Repository</name>
+            <url>https://repository.hazelcast.com/devel/</url>
+        </repository>
+    </repositories>
+</project>
