@@ -96,7 +96,7 @@ jobs:
 
       - name: Create & Sign & Upload RPM package
         run: |
-#          ./build-rpm-package.sh
+          ./build-rpm-package.sh
 
       - name: Get homebrew repository
         run: |
@@ -189,35 +189,35 @@ jobs:
           source ./common.sh
           sudo apt remove hazelcast-management-center
 
-#  verify-rpm:
-#    runs-on: ubuntu-latest
-#    container: centos:latest
-#    env:
-#      MC_VERSION: ${{ needs.build.outputs.MC_version }}
-#      PACKAGE_VERSION: ${{ needs.build.outputs.package_version }}
-#      HZ_LICENSEKEY: ${{ secrets.HZ_LICENSEKEY }}
-#    needs: [ build, update-deb, update-rpm ]
-#    name: MC RPM Package Verification
-#    steps:
-#      - uses: actions/checkout@v2.3.2
-#
-#      - name: Install MC from RPM
-#        run: |
-#          source ./common.sh
-#          yum install -y wget
-#          wget ${RPM_REPO_BASE_URL}/${PACKAGE_REPO}/hazelcast-rpm-${PACKAGE_REPO}.repo -O hazelcast-rpm-${PACKAGE_REPO}.repo
-#          mv hazelcast-rpm-${PACKAGE_REPO}.repo /etc/yum.repos.d/
-#          yum install -y ${{ env.HZ_DISTRIBUTION}}-${RPM_PACKAGE_VERSION}
-#          HAZELCAST_CONFIG="${GITHUB_WORKSPACE}/config/integration-test-hazelcast.yaml" hz-start > hz.log 2>&1 &
-#
-#      - name: Check MC health
-#        run: |
-#          ./check-hazelcast-health.sh
-#
-#      - name: Uninstall CLI from rpm
-#        run: |
-#          source ./common.sh
-#          yum remove -y ${{ env.HZ_DISTRIBUTION}}-${RPM_PACKAGE_VERSION}
+  verify-rpm:
+    runs-on: ubuntu-latest
+    container: centos:latest
+    env:
+      MC_VERSION: ${{ needs.build.outputs.mc_version }}
+      PACKAGE_VERSION: ${{ needs.build.outputs.package_version }}
+      HZ_LICENSEKEY: ${{ secrets.HZ_LICENSEKEY }}
+    needs: [ build, update-deb, update-rpm ]
+    name: MC RPM Package Verification
+    steps:
+      - uses: actions/checkout@v2.3.2
+
+      - name: Install MC from RPM
+        run: |
+          source ./common.sh
+          yum install -y wget
+          wget ${RPM_REPO_BASE_URL}/${PACKAGE_REPO}/hazelcast-rpm-${PACKAGE_REPO}.repo -O hazelcast-rpm-${PACKAGE_REPO}.repo
+          mv hazelcast-rpm-${PACKAGE_REPO}.repo /etc/yum.repos.d/
+          yum install -y hazelcast-management-center-${RPM_PACKAGE_VERSION}
+          /usr/lib/hazelcast/hazelcast-management-center-${MC_VERSION}/bin/start.sh > hz-mc.log 2>&1 &
+
+      - name: Check MC health
+        run: |
+          ./check-hazelcast-health.sh
+
+      - name: Uninstall CLI from rpm
+        run: |
+          source ./common.sh
+          yum remove -y ${{ env.HZ_DISTRIBUTION}}-${RPM_PACKAGE_VERSION}
 
   verify-homebrew:
     runs-on: macos-latest
