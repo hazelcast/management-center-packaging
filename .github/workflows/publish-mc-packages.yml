@@ -96,7 +96,7 @@ jobs:
 
       - name: Create & Sign & Upload RPM package
         run: |
-          ./build-rpm-package.sh
+          ./build-mc-rpm-package.sh
 
       - name: Get homebrew repository
         run: |
