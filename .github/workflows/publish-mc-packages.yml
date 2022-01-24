@@ -42,7 +42,7 @@ jobs:
       run:
         working-directory: ./hazelcast-management-center-packaging
     outputs:
-      mc_version: ${{ steps.hz_version.outputs.mc_version }}
+      mc_version: ${{ steps.mc_version.outputs.mc_version }}
       package_version: ${{ steps.package_version.outputs.package_version }}
     name: Release Automation
     steps:
@@ -197,7 +197,7 @@ jobs:
       PACKAGE_VERSION: ${{ needs.build.outputs.package_version }}
       HZ_LICENSEKEY: ${{ secrets.HZ_LICENSEKEY }}
     needs: [ build, update-deb, update-rpm ]
-    name: MC RPM Package Verification
+    name: Hazelcast Management Center RPM Package Verification
     steps:
       - uses: actions/checkout@v2.3.2
 
