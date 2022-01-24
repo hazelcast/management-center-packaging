@@ -216,7 +216,7 @@ jobs:
       - name: Uninstall CLI from rpm
         run: |
           source ./common.sh
-          yum remove -y ${{ env.HZ_DISTRIBUTION}}-${RPM_PACKAGE_VERSION}
+          yum remove -y hazelcast-management-center-${RPM_PACKAGE_VERSION}
 
   verify-homebrew:
     runs-on: macos-latest
