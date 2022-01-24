@@ -39,6 +39,7 @@ cp hazelcast-management-center@5.X.rb "hazelcast-management-center@${BREW_PACKAG
 VERSION_NODOTS=$(echo "${BREW_PACKAGE_VERSION}" | tr '[:upper:]' '[:lower:]' | sed -r 's/(^|\.)(\w)/\U\2/g' | sed 's+\.++g')
 sed -i "s+class HazelcastManagementCenterAT.* <\(.*$\)+class HazelcastManagementCenterAT${VERSION_NODOTS} <\1+g" hazelcast-management-center@${BREW_PACKAGE_VERSION}.rb
 
+sed -i "s+version.*$+version \"${BREW_PACKAGE_VERSION}\"+g" "hazelcast-management-center@${BREW_PACKAGE_VERSION}.rb"
 sed -i "s+url.*$+url \"${MC_PACKAGE_URL}\"+g" "hazelcast-management-center@${BREW_PACKAGE_VERSION}.rb"
 sed -i "s+sha256.*$+sha256 \"${ASSET_SHASUM}\"+g" "hazelcast-management-center@${BREW_PACKAGE_VERSION}.rb"
 
