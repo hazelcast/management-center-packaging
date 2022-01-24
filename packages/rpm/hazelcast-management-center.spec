@@ -36,7 +36,7 @@ rm -rf $RPM_BUILD_ROOT
 %{__chmod} 755 %{buildroot}%{_prefix}/lib/%{name}/%{name}-%{mcversion}/bin/start.sh
 %{__mkdir} -p %{buildroot}/%{_bindir}
 
-for FILENAME in %{_prefix}/lib/%{name}/%{name}-%{mcversion}/bin/*mc*; do
+for FILENAME in %{buildroot}/%{_prefix}/lib/%{name}/%{name}-%{mcversion}/bin/*mc*; do
   case "${FILENAME}" in
     *bat)
       ;;
