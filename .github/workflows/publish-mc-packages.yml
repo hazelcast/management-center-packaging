@@ -181,7 +181,7 @@ jobs:
 
       - name: Check Hazelcast Management Center Health
         run: |
-          ./check-hazelcast-health.sh
+          ./check-mc-health.sh
 
       - name: Uninstall CLI from deb
         run: |
@@ -211,7 +211,7 @@ jobs:
 
       - name: Check MC health
         run: |
-          ./check-hazelcast-health.sh
+          ./check-mc-health.sh
 
       - name: Uninstall CLI from rpm
         run: |
@@ -237,8 +237,9 @@ jobs:
 
       - name: Run Hazelcast Management Center
         run: |
-          export JAVA_OPTS="-Dhazelcast.mc.healthCheck.enable=true" 
-          /usr/local/opt/hazelcast@$BREW_PACKAGE_VERSION/libexec/bin/start.sh > hz-mc.log 2>&1 &
+          export JAVA_OPTS="-Dhazelcast.mc.healthCheck.enable=true"
+          MC_PATH="$(brew --prefix hazelcast-management-center@$BREW_PACKAGE_VERSION)
+          $MC_PATH/libexec/bin/start.sh > hz-mc.log 2>&1 &
 
       - name: Check Hazelcast Management Center Health
         run: |
