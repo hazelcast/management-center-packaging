@@ -71,5 +71,4 @@ done
 %{_prefix}/lib/%{name}/%{name}-%{mcversion}/ThirdPartyNotices.txt
 %{_prefix}/lib/%{name}/%{name}-%{mcversion}/bin/hz-mc
 %{_prefix}/lib/%{name}/%{name}-%{mcversion}/bin/*sh
-%{_prefix}/lib/%{name}/%{name}-%{mcversion}/licenses
 %{_bindir}/*mc*
