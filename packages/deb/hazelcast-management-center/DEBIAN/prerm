@@ -1,9 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 
 echo "Removing symlinks from /usr/bin"
 
-echo "TODO"
-for FILENAME in /usr/lib/hazelcast/${HZ_DISTRIBUTION}-${HZ_VERSION}/bin/hz*; do
+for FILENAME in /usr/lib/hazelcast-management-center/hazelcast-management-center-"${MC_VERSION}"/bin/*mc*; do
   case "${FILENAME}" in
     *bat)
       ;;
