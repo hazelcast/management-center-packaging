@@ -108,7 +108,7 @@ jobs:
         with:
           repository: ${{ env.BREW_GIT_REPO_NAME }}
           ref: master
-          token: ${{ secrets.DEVOPS_SECRET }}
+          token: ${{ secrets.GH_PAT }}
           path: 'homebrew-hz'
 
       - name: Change the artifact in homebrew-hz
