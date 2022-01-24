@@ -64,7 +64,7 @@ jobs:
             MC_VERSION=$(mvn help:evaluate -Dexpression=hazelcast.mc.version -q -DforceStdout)
           fi
           echo "MC_VERSION=$MC_VERSION" >> $GITHUB_ENV
-          echo ::set-output name=mc_version::$HZ_VERSION
+          echo ::set-output name=mc_version::$MC_VERSION
 
       - name: Set PACKAGE_VERSION
         id: package_version
@@ -222,7 +222,7 @@ jobs:
   verify-homebrew:
     runs-on: macos-latest
     env:
-      MC_VERSION: ${{ needs.build.outputs.MC_version }}
+      MC_VERSION: ${{ needs.build.outputs.mc_version }}
       PACKAGE_VERSION: ${{ needs.build.outputs.package_version }}
       HZ_LICENSEKEY: ${{ secrets.HZ_LICENSEKEY }}
     needs: [ build, update-deb, update-rpm ]
