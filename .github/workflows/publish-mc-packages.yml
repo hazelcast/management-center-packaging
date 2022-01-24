@@ -238,7 +238,7 @@ jobs:
       - name: Run Hazelcast Management Center
         run: |
           export JAVA_OPTS="-Dhazelcast.mc.healthCheck.enable=true"
-          MC_PATH="$(brew --prefix hazelcast-management-center@$BREW_PACKAGE_VERSION)
+          MC_PATH="$(brew --prefix hazelcast-management-center@$BREW_PACKAGE_VERSION)"
           $MC_PATH/libexec/bin/start.sh > hz-mc.log 2>&1 &
 
       - name: Check Hazelcast Management Center Health
