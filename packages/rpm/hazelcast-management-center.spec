@@ -1,4 +1,5 @@
 %define mcversion ${MC_VERSION}
+%define _buildshell /bin/bash
 
 Name:       hazelcast-management-center
 Version:    ${RPM_PACKAGE_VERSION}
@@ -41,7 +42,8 @@ for FILENAME in %{buildroot}/%{_prefix}/lib/%{name}/%{name}-%{mcversion}/bin/*mc
     *bat)
       ;;
     *)
-      %{__ln_s} $FILENAME %{buildroot}/%{_bindir}/"$(basename "${FILENAME}")"
+      echo "Filename: ${FILENAME}"
+      %{__ln_s} %{_prefix}/lib/%{name}/%{name}-%{mcversion}/bin/"$(basename "${FILENAME}")" %{buildroot}/%{_bindir}/"$(basename "${FILENAME}")"
       ;;
   esac
 done
@@ -69,6 +71,5 @@ done
 %{_prefix}/lib/%{name}/%{name}-%{mcversion}/*jar
 %{_prefix}/lib/%{name}/%{name}-%{mcversion}/license.txt
 %{_prefix}/lib/%{name}/%{name}-%{mcversion}/ThirdPartyNotices.txt
-%{_prefix}/lib/%{name}/%{name}-%{mcversion}/bin/hz-mc
-%{_prefix}/lib/%{name}/%{name}-%{mcversion}/bin/*sh
+%{_prefix}/lib/%{name}/%{name}-%{mcversion}/bin
 %{_bindir}/*mc*

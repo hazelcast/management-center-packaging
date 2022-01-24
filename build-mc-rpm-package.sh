@@ -32,6 +32,7 @@ mkdir -p build/rpmbuild/rpm
 cp "${MC_DISTRIBUTION_FILE}" "build/rpmbuild/SOURCES/hazelcast-management-center-${MC_VERSION}.tar.gz"
 
 export RPM_BUILD_ROOT='$RPM_BUILD_ROOT'
+export FILENAME='${FILENAME}'
 envsubst <packages/rpm/hazelcast-management-center.spec >build/rpmbuild/rpm/hazelcast-management-center.spec
 
 echo "${DEVOPS_PRIVATE_KEY}" > private.key
