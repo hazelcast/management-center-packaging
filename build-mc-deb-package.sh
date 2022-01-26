@@ -29,7 +29,7 @@ rm -rf build/deb/hazelcast-management-center
 mkdir -p build/deb/hazelcast-management-center/DEBIAN
 mkdir -p build/deb/hazelcast-management-center/usr/lib/hazelcast-management-center
 
-tar -xf "${MC_DISTRIBUTION_FILE}" -C build/deb/hazelcast-management-center/usr/lib/hazelcast-management-center
+tar -xf "${MC_DISTRIBUTION_FILE}" -C build/deb/hazelcast-management-center/usr/lib/hazelcast-management-center --strip-components=1
 
 # Replace HZ_DISTRIBUTION and HZ_VERSION in the following files
 

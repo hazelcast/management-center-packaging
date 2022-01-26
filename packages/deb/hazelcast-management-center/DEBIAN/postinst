@@ -1,6 +1,6 @@
 #!/bin/sh
 
-for FILENAME in /usr/lib/hazelcast-management-center/hazelcast-management-center-"${MC_VERSION}"/bin/*mc*; do
+for FILENAME in /usr/lib/hazelcast-management-center/bin/*mc*; do
   case "${FILENAME}" in
     *bat)
       ;;

@@ -6,6 +6,6 @@ Priority: optional
 Architecture: all
 Depends: default-jdk | java8-sdk
 Maintainer: Hazelcast Platform Team <platform@hazelcast.com>
-Description: A tool that allows users to install & run Hazelcast Management Center
+Description: Hazelcast Management Center enables monitoring and management of nodes running Hazelcast.
 Homepage: https://www.hazelcast.com/
 License: Hazelcast Enterprise Edition License
