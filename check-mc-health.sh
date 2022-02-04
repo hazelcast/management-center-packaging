@@ -6,7 +6,7 @@ until $(curl --output /dev/null --silent --fail "http://localhost:8081/health");
   if [ ${attempts} -eq ${max_attempts} ];then
       echo "Hazelcast MC not responding"
       cat hz-mc.log
-      ps -aux
+      ps aux
       exit 1
   fi
   printf '.'
