@@ -31,7 +31,7 @@ mkdir -p build/deb/hazelcast-management-center/usr/lib/hazelcast-management-cent
 
 tar -xf "${MC_DISTRIBUTION_FILE}" -C build/deb/hazelcast-management-center/usr/lib/hazelcast-management-center --strip-components=1
 
-# Replace HZ_DISTRIBUTION and HZ_VERSION in the following files
+# Replace MC_VERSION and other env variables in the following files
 
 # The postinst script uses variable FILENAME, with this value it is kind of no-op
 export FILENAME='${FILENAME}'

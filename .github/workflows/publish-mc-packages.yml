@@ -6,7 +6,7 @@ on:
     branches:
       - master
     # Push of a matching tag (v*, e.g. v5.0.2) starts build with
-    # - HZ_VERSION extracted from pom.xml
+    # - MC_VERSION extracted from pom.xml
     # - PACKAGE_VERSION extracted from the tag
     tags:
       - 'v*'
@@ -69,7 +69,7 @@ jobs:
       - name: Set PACKAGE_VERSION
         id: package_version
         # If the ref is version (e.g. v5.0.1) tag then use it as package version,
-        # otherwise use HZ_VERSION for package version (e.g 5.1-SNAPSHOT)
+        # otherwise use MC_VERSION for package version (e.g 5.1-SNAPSHOT)
         run: |
           if [[ "${{ github.ref }}" == "v"* ]]; then
             PACKAGE_VERSION=$(echo ${{ github.ref }} | cut -c 12-)
