@@ -73,7 +73,7 @@ After adding the repository run the following to install e.g.
 version `5.0.1`:
 
 ```
-sudo yum install hazelcast-management-center
+sudo yum install hazelcast-management-center=5.0.1
 ```
 
 To keep the particular version during `yum update` hold the package at
