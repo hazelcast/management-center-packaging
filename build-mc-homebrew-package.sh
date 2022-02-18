@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/local/bin/bash
 
 if [ -z "${MC_VERSION}" ]; then
   echo "Variable MC_VERSION is not set. This is the version of Hazelcast Management Center used to build the package."
@@ -44,7 +44,7 @@ sed -i "s+url.*$+url \"${MC_PACKAGE_URL}\"+g" "hazelcast-management-center@${BRE
 sed -i "s+sha256.*$+sha256 \"${ASSET_SHASUM}\"+g" "hazelcast-management-center@${BREW_PACKAGE_VERSION}.rb"
 
 # Update hazelcast and hazelcast-x.y aliases only if the version is release (not SNAPSHOT/DR/BETA)
-if [[ ${MC_VERSION} != *+(SNAPSHOT|BETA|DR)* ]]; then
+if [[ ! ( ${HZ_VERSION} =~ ^.*+(SNAPSHOT|BETA|DR).*^ ) ]]; then
   MC_MINOR_VERSION=$(echo "${MC_VERSION}" | cut -c -3)
 
   rm -f "Aliases/hazelcast-management-center-${MC_MINOR_VERSION}"
