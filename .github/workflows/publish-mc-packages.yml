@@ -78,7 +78,7 @@ jobs:
   deb:
     runs-on: ubuntu-latest
     env:
-      MC_VERSION: ${{ needs.prepare.outputs.hz_version }}
+      MC_VERSION: ${{ needs.prepare.outputs.mc_version }}
       PACKAGE_VERSION: ${{ needs.prepare.outputs.package_version }}
     defaults:
       run:
@@ -140,7 +140,7 @@ jobs:
     runs-on: ubuntu-latest
     container: rockylinux:latest
     env:
-      HZ_VERSION: ${{ needs.prepare.outputs.hz_version }}
+      MC_VERSION: ${{ needs.prepare.outputs.mc_version }}
       PACKAGE_VERSION: ${{ needs.prepare.outputs.package_version }}
     defaults:
       run:
@@ -212,7 +212,7 @@ jobs:
   homebrew:
     runs-on: macos-latest
     env:
-      HZ_VERSION: ${{ needs.prepare.outputs.hz_version }}
+      MC_VERSION: ${{ needs.prepare.outputs.mc_version }}
       PACKAGE_VERSION: ${{ needs.prepare.outputs.package_version }}
     defaults:
       run:
