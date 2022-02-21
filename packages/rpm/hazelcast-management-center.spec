@@ -12,7 +12,7 @@ License:    Hazelcast Enterprise Edition License
 URL:		https://www.hazelcast.org/
 
 Source0:    hazelcast-management-center-%{mcversion}.tar.gz
-Source1:    hazelcast.service
+Source1:    hazelcast-management-center.service
 
 Requires(pre): shadow-utils
 
@@ -46,7 +46,10 @@ rm -rf $RPM_BUILD_ROOT
 %{__cp} -vrf %{name}-%{mcversion}/* %{buildroot}%{_prefix}/lib/%{name}
 %{__chmod} 755 %{buildroot}%{_prefix}/lib/%{name}/bin/mc-*sh
 %{__chmod} 755 %{buildroot}%{_prefix}/lib/%{name}/bin/start.sh
-%{__mkdir} -p %{buildroot}/%{_bindir}
+%{__mkdir} -p %{buildroot}%{_bindir}
+
+%{__mkdir} -p %{buildroot}%{_unitdir}
+%{__cp} %{SOURCE1} %{buildroot}%{_unitdir}/hazelcast.service
 
 for FILENAME in %{buildroot}/%{_prefix}/lib/%{name}/bin/*mc*; do
   case "${FILENAME}" in
@@ -80,3 +83,4 @@ printf "\n\nUse 'hz start' or 'systemctl start hazelcast' to start the Hazelcast
 %{_prefix}/lib/%{name}/ThirdPartyNotices.txt
 %{_prefix}/lib/%{name}/bin
 %{_bindir}/*mc*
+%{_unitdir}/hazelcast-management-center.service

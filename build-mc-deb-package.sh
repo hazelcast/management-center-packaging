@@ -33,9 +33,6 @@ mkdir -p build/deb/hazelcast-management-center/lib/systemd/system
 tar -xf "${MC_DISTRIBUTION_FILE}" -C build/deb/hazelcast-management-center/usr/lib/hazelcast-management-center --strip-components=1
 
 # Replace MC_VERSION and other env variables in the following files
-
-# The postinst script uses variable FILENAME, with this value it is kind of no-op
-export FILENAME='${FILENAME}'
 envsubst <packages/deb/hazelcast-management-center/DEBIAN/control >build/deb/hazelcast-management-center/DEBIAN/control
 
 cp packages/deb/hazelcast-management-center/DEBIAN/conffiles build/deb/hazelcast-management-center/DEBIAN/conffiles

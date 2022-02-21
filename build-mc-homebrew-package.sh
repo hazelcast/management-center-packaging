@@ -31,9 +31,8 @@ echo "Building Homebrew package hazelcast-management-center:${MC_VERSION} packag
 
 ASSET_SHASUM=$(sha256sum "${MC_DISTRIBUTION_FILE}" | cut -d ' ' -f 1)
 
+cp packages/brew/hazelcast-management-center@5.X.rb ../homebrew-hz/"hazelcast-management-center@${BREW_PACKAGE_VERSION}.rb"
 cd ../homebrew-hz || exit 1
-
-cp ../management-center-packaging/packages/brew/hazelcast-management-center@5.X.rb "hazelcast-management-center@${BREW_PACKAGE_VERSION}.rb"
 
 # This version is used in `class HazelcastAT${VERSION_NODOTS}`, it must not have dots nor hyphens and must be CamelCased
 VERSION_NODOTS=$(echo "${BREW_PACKAGE_VERSION}" | tr '[:upper:]' '[:lower:]' | sed -r 's/(^|\.)(\w)/\U\2/g' | sed 's+\.++g')
@@ -44,7 +43,7 @@ sed -i "s+url.*$+url \"${MC_PACKAGE_URL}\"+g" "hazelcast-management-center@${BRE
 sed -i "s+sha256.*$+sha256 \"${ASSET_SHASUM}\"+g" "hazelcast-management-center@${BREW_PACKAGE_VERSION}.rb"
 
 # Update hazelcast and hazelcast-x.y aliases only if the version is release (not SNAPSHOT/DR/BETA)
-if [[ ! ( ${HZ_VERSION} =~ ^.*+(SNAPSHOT|BETA|DR).*^ ) ]]; then
+if [[ ! ( ${MC_VERSION} =~ ^.*+(SNAPSHOT|BETA|DR).*^ ) ]]; then
   MC_MINOR_VERSION=$(echo "${MC_VERSION}" | cut -c -3)
 
   cp "hazelcast-management-center@${BREW_PACKAGE_VERSION}.rb" "hazelcast-management-center-${MC_MINOR_VERSION}"
