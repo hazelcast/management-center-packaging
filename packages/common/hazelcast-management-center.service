@@ -1,0 +1,17 @@
+[Unit]
+Description=Hazelcast Management Center enables monitoring and management of nodes running Hazelcast.
+After=syslog.target network.target
+
+[Service]
+User=hazelcast
+Group=hazelcast
+
+SuccessExitStatus=143
+
+Type=simple
+
+ExecStart=mc-start
+ExecStop=/bin/kill -15 $MAINPID
+
+[Install]
+WantedBy=multi-user.target

@@ -33,7 +33,7 @@ ASSET_SHASUM=$(sha256sum "${MC_DISTRIBUTION_FILE}" | cut -d ' ' -f 1)
 
 cd ../homebrew-hz || exit 1
 
-cp hazelcast-management-center@5.X.rb "hazelcast-management-center@${BREW_PACKAGE_VERSION}.rb"
+cp ../management-center-packaging/packages/brew/hazelcast-management-center@5.X.rb "hazelcast-management-center@${BREW_PACKAGE_VERSION}.rb"
 
 # This version is used in `class HazelcastAT${VERSION_NODOTS}`, it must not have dots nor hyphens and must be CamelCased
 VERSION_NODOTS=$(echo "${BREW_PACKAGE_VERSION}" | tr '[:upper:]' '[:lower:]' | sed -r 's/(^|\.)(\w)/\U\2/g' | sed 's+\.++g')
@@ -47,25 +47,23 @@ sed -i "s+sha256.*$+sha256 \"${ASSET_SHASUM}\"+g" "hazelcast-management-center@$
 if [[ ! ( ${HZ_VERSION} =~ ^.*+(SNAPSHOT|BETA|DR).*^ ) ]]; then
   MC_MINOR_VERSION=$(echo "${MC_VERSION}" | cut -c -3)
 
-  rm -f "Aliases/hazelcast-management-center-${MC_MINOR_VERSION}"
-  ln -s "../hazelcast-management-center@${BREW_PACKAGE_VERSION}.rb" "Aliases/hazelcast-management-center-${MC_MINOR_VERSION}"
+  cp "hazelcast-management-center@${BREW_PACKAGE_VERSION}.rb" "hazelcast-management-center-${MC_MINOR_VERSION}"
 
   # Update 'hazelcast-management-center' alias
   # only if the version is greater than (new release) or equal to highest version
   UPDATE_LATEST="true"
   cd Aliases || exit
-  versions=("hazelcast-management-center"-[0-9]*)
+  versions=("hazelcast-management-center"-[0-9]*\.rb)
   cd ..
   for version in "${versions[@]}"
   do
-    if [[ "$version" > "hazelcast-management-center-${MC_MINOR_VERSION}" ]]; then
+    if [[ "$version" > "hazelcast-management-center-${MC_MINOR_VERSION}.rb" ]]; then
       UPDATE_LATEST="false"
     fi
   done
 
   if [ "${UPDATE_LATEST}" == "true" ]; then
-    rm "Aliases/hazelcast-management-center"
-    ln -s "../hazelcast-management-center@${BREW_PACKAGE_VERSION}.rb" "Aliases/hazelcast-management-center"
+    cp "hazelcast-management-center@${BREW_PACKAGE_VERSION}.rb" hazelcast-management-center.rb
   fi
 fi
 
