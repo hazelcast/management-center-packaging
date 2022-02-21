@@ -28,6 +28,7 @@ rm -rf build/deb/hazelcast-management-center
 
 mkdir -p build/deb/hazelcast-management-center/DEBIAN
 mkdir -p build/deb/hazelcast-management-center/usr/lib/hazelcast-management-center
+mkdir -p build/deb/hazelcast-management-center/lib/systemd/system
 
 tar -xf "${MC_DISTRIBUTION_FILE}" -C build/deb/hazelcast-management-center/usr/lib/hazelcast-management-center --strip-components=1
 
@@ -35,10 +36,12 @@ tar -xf "${MC_DISTRIBUTION_FILE}" -C build/deb/hazelcast-management-center/usr/l
 
 # The postinst script uses variable FILENAME, with this value it is kind of no-op
 export FILENAME='${FILENAME}'
-envsubst <packages/deb/hazelcast-management-center/DEBIAN/conffiles >build/deb/hazelcast-management-center/DEBIAN/conffiles
 envsubst <packages/deb/hazelcast-management-center/DEBIAN/control >build/deb/hazelcast-management-center/DEBIAN/control
-envsubst <packages/deb/hazelcast-management-center/DEBIAN/postinst >build/deb/hazelcast-management-center/DEBIAN/postinst
-envsubst <packages/deb/hazelcast-management-center/DEBIAN/prerm >build/deb/hazelcast-management-center/DEBIAN/prerm
+
+cp packages/deb/hazelcast-management-center/DEBIAN/conffiles build/deb/hazelcast-management-center/DEBIAN/conffiles
+cp packages/deb/hazelcast-management-center/DEBIAN/postinst build/deb/hazelcast-management-center/DEBIAN/postinst
+cp packages/deb/hazelcast-management-center/DEBIAN/prerm build/deb/hazelcast-management-center/DEBIAN/prerm
+cp packages/common/hazelcast-management-center.service build/deb/hazelcast-management-center/lib/systemd/system/hazelcast-management-center.service
 
 # postinst and prerm must be executable
 chmod 775 build/deb/hazelcast-management-center/DEBIAN/postinst build/deb/hazelcast-management-center/DEBIAN/prerm

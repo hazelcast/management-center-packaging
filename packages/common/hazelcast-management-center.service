@@ -10,7 +10,7 @@ SuccessExitStatus=143
 
 Type=simple
 
-ExecStart=mc-start
+ExecStart=/usr/lib/hazelcast-management-center/start.sh
 ExecStop=/bin/kill -15 $MAINPID
 
 [Install]
