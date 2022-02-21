@@ -30,6 +30,7 @@ mkdir -p build/rpmbuild/SOURCES/
 mkdir -p build/rpmbuild/rpm
 
 cp "${MC_DISTRIBUTION_FILE}" "build/rpmbuild/SOURCES/hazelcast-management-center-${MC_VERSION}.tar.gz"
+cp packages/common/hazelcast-management-center.service build/rpmbuild/SOURCES/hazelcast-management-center.service
 
 export RPM_BUILD_ROOT='${RPM_BUILD_ROOT}'
 export FILENAME='${FILENAME}'
