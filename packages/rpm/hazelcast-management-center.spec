@@ -74,18 +74,6 @@ printf "\n\nUse 'hz start' or 'systemctl start hazelcast' to start the Hazelcast
 %postun
 %systemd_postun %{name}.service
 
-echo "Removing symlinks from /usr/bin"
-
-for FILENAME in /usr/lib/hazelcast-management-center/bin/*mc*; do
-  case "${FILENAME}" in
-    *bat)
-      ;;
-    *)
-      rm %{buildroot}/%{_bindir}/"$(basename "${FILENAME}")"
-      ;;
-  esac
-done
-
 %files
 %{_prefix}/lib/%{name}/*jar
 %{_prefix}/lib/%{name}/license.txt
