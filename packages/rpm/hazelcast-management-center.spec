@@ -49,7 +49,7 @@ rm -rf $RPM_BUILD_ROOT
 %{__mkdir} -p %{buildroot}%{_bindir}
 
 %{__mkdir} -p %{buildroot}%{_unitdir}
-%{__cp} %{SOURCE1} %{buildroot}%{_unitdir}/hazelcast.service
+%{__cp} %{SOURCE1} %{buildroot}%{_unitdir}/hazelcast-management-center.service
 
 for FILENAME in %{buildroot}/%{_prefix}/lib/%{name}/bin/*mc*; do
   case "${FILENAME}" in
