@@ -123,7 +123,7 @@ jobs:
           source ./common.sh
           wget -qO - https://repository.hazelcast.com/api/gpg/key/public | sudo apt-key add -
           echo "deb ${DEBIAN_REPO_BASE_URL} ${PACKAGE_REPO} main" | sudo tee -a /etc/apt/sources.list
-          sudo apt update && sudo apt install hazelcast-management-center=${{ env.PACKAGE_VERSION }}
+          sudo apt update && sudo apt install hazelcast-management-center=${MC_VERSION}
           export JAVA_OPTS="-Dhazelcast.mc.healthCheck.enable=true"
           /usr/lib/hazelcast-management-center/bin/start.sh > hz-mc.log 2>&1 &
 
@@ -135,6 +135,14 @@ jobs:
         run: |
           source ./common.sh
           sudo apt remove hazelcast-management-center
+
+      - name: Remove deb package from test repo
+        if: github.event_name == 'pull_request'
+        run: |
+          source ./common.sh
+          curl -H "Authorization: Bearer ${{ secrets.ARTIFACTORY_SECRET }}" \
+            -X DELETE \
+            "$DEBIAN_REPO_BASE_URL/hazelcast-management-center-${DEB_PACKAGE_VERSION}-all.deb"
 
   rpm:
     runs-on: ubuntu-latest
@@ -192,7 +200,7 @@ jobs:
           yum install -y wget
           wget ${RPM_REPO_BASE_URL}/${PACKAGE_REPO}/hazelcast-rpm-${PACKAGE_REPO}.repo -O hazelcast-rpm-${PACKAGE_REPO}.repo
           mv hazelcast-rpm-${PACKAGE_REPO}.repo /etc/yum.repos.d/
-          yum install -y hazelcast-management-center-${RPM_PACKAGE_VERSION}
+          yum install -y hazelcast-management-center-${RPM_MC_VERSION}
           export JAVA_OPTS="-Dhazelcast.mc.healthCheck.enable=true"
           /usr/lib/hazelcast-management-center/bin/start.sh > hz-mc.log 2>&1 &
 
@@ -208,6 +216,14 @@ jobs:
         run: |
           source ./common.sh
           echo "BREW_GIT_REPO_NAME=${BREW_GIT_REPO_NAME}" >> $GITHUB_ENV
+
+      - name: Remove rpm package from test repo
+        if: github.event_name == 'pull_request'
+        run: |
+          source ./common.sh
+          curl -H "Authorization: Bearer ${{ secrets.ARTIFACTORY_SECRET }}" \
+            -X DELETE \
+            "$RPM_REPO_BASE_URL/${PACKAGE_REPO}/hazelcast-management-center-${RPM_PACKAGE_VERSION}.noarch.rpm"
 
   homebrew:
     runs-on: macos-latest
