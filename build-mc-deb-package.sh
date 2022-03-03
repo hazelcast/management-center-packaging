@@ -21,7 +21,7 @@ fi
 
 source common.sh
 
-echo "Building DEB package hazelcast-management-center:${MC_VERSION} package version ${PACKAGE_VERSION}"
+echo "Building DEB package hazelcast-management-center:${MC_VERSION} package version ${DEB_PACKAGE_VERSION}"
 
 # Remove previous build, useful on local
 rm -rf build/deb/hazelcast-management-center
@@ -45,7 +45,7 @@ chmod 775 build/deb/hazelcast-management-center/DEBIAN/postinst build/deb/hazelc
 
 dpkg-deb --build build/deb/hazelcast-management-center
 
-DEB_FILE=hazelcast-management-center-${PACKAGE_VERSION}-all.deb
+DEB_FILE=hazelcast-management-center-${DEB_PACKAGE_VERSION}-all.deb
 mv build/deb/hazelcast-management-center.deb "$DEB_FILE"
 
 if [ "${PUBLISH}" == "true" ]; then
