@@ -1,4 +1,4 @@
-#!/usr/local/bin/bash
+#!/usr/bin/env bash
 
 if [ -z "${MC_VERSION}" ]; then
   echo "Variable MC_VERSION is not set. This is the version of Hazelcast Management Center used to build the package."
@@ -26,34 +26,48 @@ if [ -z "${MC_PACKAGE_URL}" ]; then
 fi
 
 source common.sh
+source packages/brew/functions.sh
 
 echo "Building Homebrew package hazelcast-management-center:${MC_VERSION} package version ${PACKAGE_VERSION}"
 
 ASSET_SHASUM=$(sha256sum "${MC_DISTRIBUTION_FILE}" | cut -d ' ' -f 1)
 
-cp packages/brew/hazelcast-management-center@5.X.rb ../homebrew-hz/"hazelcast-management-center@${BREW_PACKAGE_VERSION}.rb"
+TEMPLATE_FILE="$(pwd)/packages/brew/hazelcast-template.rb"
 cd ../homebrew-hz || exit 1
 
-# This version is used in `class HazelcastAT${VERSION_NODOTS}`, it must not have dots nor hyphens and must be CamelCased
-VERSION_NODOTS=$(echo "${BREW_PACKAGE_VERSION}" | tr '[:upper:]' '[:lower:]' | sed -r 's/(^|\.)(\w)/\U\2/g' | sed 's+\.++g')
-sed -i "s+class HazelcastManagementCenterAT.* <\(.*$\)+class HazelcastManagementCenterAT${VERSION_NODOTS} <\1+g" hazelcast-management-center@${BREW_PACKAGE_VERSION}.rb
+function updateClassName {
+  class=$1
+  file=$2
+  sed -i "s+class HazelcastManagementCenterAT <\(.*$\)+class $class <\1+g" "$file"
+}
 
-sed -i "s+version.*$+version \"${BREW_PACKAGE_VERSION}\"+g" "hazelcast-management-center@${BREW_PACKAGE_VERSION}.rb"
-sed -i "s+url.*$+url \"${MC_PACKAGE_URL}\"+g" "hazelcast-management-center@${BREW_PACKAGE_VERSION}.rb"
-sed -i "s+sha256.*$+sha256 \"${ASSET_SHASUM}\"+g" "hazelcast-management-center@${BREW_PACKAGE_VERSION}.rb"
+function generateFormula {
+  class=$1
+  file=$2
+  echo "Generating $file formula"
+  cp "$TEMPLATE_FILE" "$file"
+  updateClassName "$class" "$file"
+  sed -i "s+url.*$+url \"${HZ_PACKAGE_URL}\"+g" "$file"
+  sed -i "s+sha256.*$+sha256 \"${ASSET_SHASUM}\"+g" "$file"
+}
 
-# Update hazelcast and hazelcast-x.y aliases only if the version is release (not SNAPSHOT/DR/BETA)
-if [[ ! ( ${MC_VERSION} =~ ^.*+(SNAPSHOT|BETA|DR).*^ ) ]]; then
-  MC_MINOR_VERSION=$(echo "${MC_VERSION}" | cut -c -3)
+BREW_CLASS=$(brewClass "hazelcast-management-center" "${BREW_PACKAGE_VERSION}")
+generateFormula "$BREW_CLASS" "hazelcast-management-center@${BREW_PACKAGE_VERSION}.rb"
+
+MC_MINOR_VERSION=$(echo "${MC_VERSION}" | cut -c -3)
+
+# Update hazelcast-management-center and hazelcast-management-center-x.y aliases
+# only if the version is release (not SNAPSHOT/DR/BETA)
+if [[ "$RELEASE_TYPE" = "stable" ]]; then
+  BREW_CLASS=$(brewClass "hazelcast-management-center${MC_MINOR_VERSION}")
+  generateFormula "$BREW_CLASS" "hazelcast-management-center-${MC_MINOR_VERSION}.rb"
 
   cp "hazelcast-management-center@${BREW_PACKAGE_VERSION}.rb" "hazelcast-management-center-${MC_MINOR_VERSION}"
 
   # Update 'hazelcast-management-center' alias
   # only if the version is greater than (new release) or equal to highest version
   UPDATE_LATEST="true"
-  cd Aliases || exit
   versions=("hazelcast-management-center"-[0-9]*\.rb)
-  cd ..
   for version in "${versions[@]}"
   do
     if [[ "$version" > "hazelcast-management-center-${MC_MINOR_VERSION}.rb" ]]; then
@@ -62,7 +76,23 @@ if [[ ! ( ${MC_VERSION} =~ ^.*+(SNAPSHOT|BETA|DR).*^ ) ]]; then
   done
 
   if [ "${UPDATE_LATEST}" == "true" ]; then
-    cp "hazelcast-management-center@${BREW_PACKAGE_VERSION}.rb" hazelcast-management-center.rb
+    generateFormula "$(alphanumCamelCase "hazelcast-management-center")" "hazelcast-management-center.rb"
+  fi
+else
+  # Update 'hazelcast-snapshot/beta/dr'
+  # only if the version is greater than (new release) or equal to highest version
+  UPDATE_LATEST="true"
+  versions=("hazelcast-management-center"-[0-9]*\.rb)
+  for version in "${versions[@]}"
+  do
+    if [[ "$version" > "hazelcast-management-center-${MC_MINOR_VERSION}.rb" ]]; then
+      UPDATE_LATEST="false"
+    fi
+  done
+
+  if [ "${UPDATE_LATEST}" == "true" ]; then
+    BREW_CLASS=$(brewClass "hazelcast-management-center-$RELEASE_TYPE")
+    generateFormula "$BREW_CLASS" "hazelcast-management-center-${RELEASE_TYPE}.rb"
   fi
 fi
 

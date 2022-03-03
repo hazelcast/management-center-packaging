@@ -242,7 +242,6 @@ jobs:
 
       - name: Install up-to-date tools
         run: |
-          brew install bash
           brew install gnu-sed
           brew install coreutils
 
@@ -250,12 +249,17 @@ jobs:
           sed --version
           PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
           sha256sum --version
+          echo "PATH=/usr/local/opt/coreutils/libexec/gnubin:/usr/local/opt/gnu-sed/libexec/gnubin:$PATH" >> $GITHUB_ENV
 
       - name: Setup JDK
         uses: actions/setup-java@v1
         with:
           java-version: '8'
           architecture: 'x64'
+
+      - name: Run script tests
+        run: |
+          ./test.sh
 
       - name: Get homebrew repository
         run: |
@@ -283,8 +287,6 @@ jobs:
 
       - name: Change the artifact in homebrew-hz
         run: |
-          export PATH="/usr/local/opt/gnu-sed/libexec/gnubin:$PATH"
-          export PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
           ./build-mc-homebrew-package.sh
 
       - name: Commit changes & Push to homebrew-hz repo
@@ -294,8 +296,7 @@ jobs:
           cd ../homebrew-hz
           git config --global user.name 'devOpsHazelcast'
           git config --global user.email 'devops@hazelcast.com'
-          git add Aliases
-          git add hazelcast-management-center@${BREW_PACKAGE_VERSION}.rb
+          git add *rb
           if [[ `git status --porcelain --untracked-files=no` ]]; then
             git commit -am "Hazelcast Management Center ${{ env.PACKAGE_VERSION }} release"
             git pull --rebase
