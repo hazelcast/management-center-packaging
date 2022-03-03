@@ -47,7 +47,7 @@ function generateFormula {
   echo "Generating $file formula"
   cp "$TEMPLATE_FILE" "$file"
   updateClassName "$class" "$file"
-  sed -i "s+url.*$+url \"${HZ_PACKAGE_URL}\"+g" "$file"
+  sed -i "s+url.*$+url \"${MC_PACKAGE_URL}\"+g" "$file"
   sed -i "s+sha256.*$+sha256 \"${ASSET_SHASUM}\"+g" "$file"
 }
 
