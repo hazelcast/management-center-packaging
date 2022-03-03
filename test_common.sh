@@ -29,10 +29,10 @@ findScriptDir
 TESTS_RESULT=0
 
 function assertReleaseType {
-  export HZ_VERSION=$1
+  export MC_VERSION=$1
   local expected=$2
   . "$SCRIPT_DIR"/common.sh
-  assert_eq $expected $RELEASE_TYPE "Version $HZ_VERSION should be a $expected release" || TESTS_RESULT=$?
+  assert_eq $expected $RELEASE_TYPE "Version $MC_VERSION should be a $expected release" || TESTS_RESULT=$?
 }
 
 log_header "Tests for RELEASE_TYPE"
@@ -44,13 +44,13 @@ assertReleaseType "5.1" "stable"
 assertReleaseType "5.1.1" "stable"
 
 function assertPackageVersions {
-  export HZ_VERSION=$1
+  export MC_VERSION=$1
   export PACKAGE_VERSION=$2
   local expectedDebVersion=$3
   local expectedRpmVersion=$4
   . "$SCRIPT_DIR"/common.sh
-  assert_eq "$expectedDebVersion" "$DEB_PACKAGE_VERSION" "DEB_PACKAGE_VERSION for (HZ_VERSION=$HZ_VERSION, PACKAGE_VERSION=$PACKAGE_VERSION) should be $expectedDebVersion" || TESTS_RESULT=$?
-  assert_eq "$expectedRpmVersion" "$RPM_PACKAGE_VERSION" "RPM_PACKAGE_VERSION for (HZ_VERSION=$HZ_VERSION, PACKAGE_VERSION=$PACKAGE_VERSION) should be $expectedRpmVersion" || TESTS_RESULT=$?
+  assert_eq "$expectedDebVersion" "$DEB_PACKAGE_VERSION" "DEB_PACKAGE_VERSION for (MC_VERSION=$MC_VERSION, PACKAGE_VERSION=$PACKAGE_VERSION) should be $expectedDebVersion" || TESTS_RESULT=$?
+  assert_eq "$expectedRpmVersion" "$RPM_PACKAGE_VERSION" "RPM_PACKAGE_VERSION for (MC_VERSION=$MC_VERSION, PACKAGE_VERSION=$PACKAGE_VERSION) should be $expectedRpmVersion" || TESTS_RESULT=$?
 }
 
 log_header "Tests for DEB_PACKAGE_VERSION and RPM_PACKAGE_VERSION"

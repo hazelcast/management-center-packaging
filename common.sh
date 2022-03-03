@@ -1,13 +1,13 @@
 #!/bin/bash
 
 export RELEASE_TYPE=stable
-if [[ "$HZ_VERSION" == *"SNAPSHOT"* ]]; then
+if [[ "$MC_VERSION" == *"SNAPSHOT"* ]]; then
   export RELEASE_TYPE=snapshot
 fi
-if [[ "$HZ_VERSION" == *"DR"* ]]; then
+if [[ "$MC_VERSION" == *"DR"* ]]; then
   export RELEASE_TYPE=devel
 fi
-if [[ "$HZ_VERSION" == *"BETA"* ]]; then
+if [[ "$MC_VERSION" == *"BETA"* ]]; then
   export RELEASE_TYPE=beta
 fi
 export PACKAGE_REPO=$RELEASE_TYPE

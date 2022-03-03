@@ -1,5 +1,5 @@
 %define mcversion ${MC_VERSION}
-%define rpmhzversion ${RPM_HZ_VERSION}
+%define rpmhzversion ${RPM_MC_VERSION}
 %define releaseversion ${RELEASE_VERSION}
 %define _buildshell /bin/bash
 %define debug_package %{nil}
