@@ -32,7 +32,7 @@ echo "Building Homebrew package hazelcast-management-center:${MC_VERSION} packag
 
 ASSET_SHASUM=$(sha256sum "${MC_DISTRIBUTION_FILE}" | cut -d ' ' -f 1)
 
-TEMPLATE_FILE="$(pwd)/packages/brew/hazelcast-template.rb"
+TEMPLATE_FILE="$(pwd)/packages/brew/hazelcast-management-center-template.rb"
 cd ../homebrew-hz || exit 1
 
 function updateClassName {
