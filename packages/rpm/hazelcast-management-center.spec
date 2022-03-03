@@ -1,11 +1,13 @@
 %define mcversion ${MC_VERSION}
+%define rpmhzversion ${RPM_HZ_VERSION}
+%define releaseversion ${RELEASE_VERSION}
 %define _buildshell /bin/bash
 %define debug_package %{nil}
 
 Name:       hazelcast-management-center
-Version:    ${RPM_PACKAGE_VERSION}
+Version:    %{rpmhzversion}
 Epoch:      1
-Release:    1
+Release:    %{releaseversion}
 Summary:    Hazelcast Management Center enables monitoring and management of nodes running Hazelcast.
 
 License:    Hazelcast Enterprise Edition License
