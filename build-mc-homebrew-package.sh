@@ -38,7 +38,7 @@ cd ../homebrew-hz || exit 1
 function updateClassName {
   class=$1
   file=$2
-  sed -i "s+class HazelcastManagementCenterAT <\(.*$\)+class $class <\1+g" "$file"
+  sed -i "s+class HazelcastManagementCenterAT5X <\(.*$\)+class $class <\1+g" "$file"
 }
 
 function generateFormula {
