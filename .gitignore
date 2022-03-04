@@ -13,6 +13,6 @@ target/
 *.dat
 distro/build/
 distro/lib/
-*deb
+*.deb
 *tar.gz
 

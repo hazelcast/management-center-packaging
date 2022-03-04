@@ -1,0 +1,21 @@
+#!/bin/sh
+
+for FILENAME in /usr/lib/hazelcast-management-center/bin/*mc*; do
+  case "${FILENAME}" in
+    *bat)
+      ;;
+    *)
+      ln -s "${FILENAME}" /usr/bin/"$(basename "${FILENAME}")"
+      ;;
+  esac
+done
+
+groupadd -r hazelcast
+useradd -r -g hazelcast -d /usr/lib/hazelcast -s /sbin/nologin hazelcast
+chown -R hazelcast:hazelcast /usr/lib/hazelcast
+
+if command -v systemctl > /dev/null; then
+  systemctl daemon-reload
+fi
+
+printf "\n\nHazelcast Management Center is successfully installed to '/usr/lib/hazelcast-management-center/'\n"

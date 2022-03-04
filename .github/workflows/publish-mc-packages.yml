@@ -6,7 +6,7 @@ on:
     branches:
       - master
     # Push of a matching tag (v*, e.g. v5.0.2) starts build with
-    # - HZ_VERSION extracted from pom.xml
+    # - MC_VERSION extracted from pom.xml
     # - PACKAGE_VERSION extracted from the tag
     tags:
       - 'v*'
@@ -20,40 +20,308 @@ on:
 
 env:
   EVENT_NAME: ${{ github.event_name }}
+  PUBLISH: "true"
+  ARTIFACTORY_SECRET: ${{ secrets.ARTIFACTORY_SECRET }}
+  DEVOPS_PRIVATE_KEY: ${{ secrets.DEVOPS_PRIVATE_KEY }}
+  BINTRAY_PASSPHRASE: ${{ secrets.BINTRAY_PASSPHRASE }}
+  HZ_LICENSEKEY: ${{ secrets.HZ_LICENSEKEY }}
+
 
 # Constant for now - should ensure single build, maybe we can limit this to something from github.*
 concurrency: single-build
 
 jobs:
-  build:
+  prepare:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        java: [ '8' ]
-        architecture: [ 'x64' ]
     env:
       MC_VERSION: ${{ github.event.inputs.MC_VERSION }}
-      PUBLISH: "true"
-      ARTIFACTORY_SECRET: ${{ secrets.ARTIFACTORY_SECRET }}
-      DEVOPS_PRIVATE_KEY: ${{ secrets.DEVOPS_PRIVATE_KEY }}
-      BINTRAY_PASSPHRASE: ${{ secrets.BINTRAY_PASSPHRASE }}
     defaults:
       run:
-        working-directory: ./hazelcast-management-center-packaging
+        working-directory: ./management-center-packaging
     outputs:
-      mc_version: ${{ steps.hz_version.outputs.mc_version }}
+      mc_version: ${{ steps.mc_version.outputs.mc_version }}
       package_version: ${{ steps.package_version.outputs.package_version }}
-    name: Release Automation
     steps:
-      - name: Checkout hazelcast-command-line repo
+      - name: Checkout management-center-packaging repo
         uses: actions/checkout@v2.3.2
         with:
-          path: 'hazelcast-management-center-packaging'
+          path: 'management-center-packaging'
 
       - name: Setup JDK
         uses: actions/setup-java@v1
         with:
-          java-version: ${{ matrix.java }}
-          architecture: ${{ matrix.architecture }}
+          java-version: '8'
+          architecture: 'x64'
 
+      - name: Set MC_VERSION
+        id: mc_version
+        run: |
+          if [ -z "${{ env.MC_VERSION }}" ]; then
+            MC_VERSION=$(mvn help:evaluate -Dexpression=hazelcast.mc.version -q -DforceStdout)
+          fi
+          echo "MC_VERSION=$MC_VERSION" >> $GITHUB_ENV
+          echo ::set-output name=mc_version::$MC_VERSION
+
+      - name: Set PACKAGE_VERSION
+        id: package_version
+        # If the ref is version (e.g. v5.0.1) tag then use it as package version,
+        # otherwise use MC_VERSION for package version (e.g 5.1-SNAPSHOT)
+        run: |
+          if [[ "${{ github.ref }}" == "v"* ]]; then
+            PACKAGE_VERSION=$(echo ${{ github.ref }} | cut -c 12-)
+          else
+            PACKAGE_VERSION=${{ env.MC_VERSION }}
+          fi
+          echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> $GITHUB_ENV
+          echo ::set-output name=package_version::$PACKAGE_VERSION
+
+  deb:
+    runs-on: ubuntu-latest
+    env:
+      MC_VERSION: ${{ needs.prepare.outputs.mc_version }}
+      PACKAGE_VERSION: ${{ needs.prepare.outputs.package_version }}
+    defaults:
+      run:
+        working-directory: ./management-center-packaging
+    needs: [prepare]
+    steps:
+      - name: Checkout management-center-packaging repo
+        uses: actions/checkout@v2.3.2
+        with:
+          path: 'management-center-packaging'
+
+      - name: Setup JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: '8'
+          architecture: 'x64'
+
+      - name: Download the distribution tar.gz file
+        run: |          
+          if [[ "${MC_VERSION}" != *SNAPSHOT* ]]; then
+            VERSION="${MC_VERSION}"
+          else
+            VERSION=latest-snapshot
+          fi
+          MC_PACKAGE_URL="https://repository.hazelcast.com/download/management-center/hazelcast-management-center-${VERSION}.tar.gz"
+          echo "MC_PACKAGE_URL=$MC_PACKAGE_URL" >> $GITHUB_ENV
+          curl --silent --fail --location "${MC_PACKAGE_URL}" --output hazelcast-management-center-${MC_VERSION}.tar.gz 
+
+      - name: Create & Upload DEB package
+        run: |
+          ./build-mc-deb-package.sh
+
+      - name: Calculate Debian Repository Metadata
+        run: |
+          source common.sh
+
+          curl -H "Authorization: Bearer ${{ secrets.ARTIFACTORY_SECRET }}" \
+            -X POST "https://repository.hazelcast.com/api/deb/reindex/${DEBIAN_REPO}"
+
+      - name: Install Hazelcast Management Center from DEB
+        run: |
+          source ./common.sh
+          wget -qO - https://repository.hazelcast.com/api/gpg/key/public | sudo apt-key add -
+          echo "deb ${DEBIAN_REPO_BASE_URL} ${PACKAGE_REPO} main" | sudo tee -a /etc/apt/sources.list
+          sudo apt update && sudo apt install hazelcast-management-center=${MC_VERSION}
+          export JAVA_OPTS="-Dhazelcast.mc.healthCheck.enable=true"
+          /usr/lib/hazelcast-management-center/bin/start.sh > hz-mc.log 2>&1 &
+
+      - name: Check Hazelcast Management Center Health
+        run: |
+          ./check-mc-health.sh
+
+      - name: Uninstall CLI from deb
+        run: |
+          source ./common.sh
+          sudo apt remove hazelcast-management-center
+
+      - name: Remove deb package from test repo
+        if: github.event_name == 'pull_request'
+        run: |
+          source ./common.sh
+          curl -H "Authorization: Bearer ${{ secrets.ARTIFACTORY_SECRET }}" \
+            -X DELETE \
+            "$DEBIAN_REPO_BASE_URL/hazelcast-management-center-${DEB_PACKAGE_VERSION}-all.deb"
+
+  rpm:
+    runs-on: ubuntu-latest
+    container: rockylinux:latest
+    env:
+      MC_VERSION: ${{ needs.prepare.outputs.mc_version }}
+      PACKAGE_VERSION: ${{ needs.prepare.outputs.package_version }}
+    defaults:
+      run:
+        working-directory: ./management-center-packaging
+    needs: [prepare]
+    steps:
+      - name: Checkout management-center-packaging repo
+        uses: actions/checkout@v2.3.2
+        with:
+          path: 'management-center-packaging'
+
+      - name: Setup JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: '8'
+          architecture: 'x64'
+
+      - name: Install Required tools
+        run: |
+          yum install -y maven rpm-sign rpm-build wget
+
+      - name: Download the distribution tar.gz file
+        run: |
+          if [[ "${MC_VERSION}" != *SNAPSHOT* ]]; then
+            VERSION="${MC_VERSION}"
+          else
+            VERSION=latest-snapshot
+          fi
+          MC_PACKAGE_URL="https://repository.hazelcast.com/download/management-center/hazelcast-management-center-${VERSION}.tar.gz"
+          echo "MC_PACKAGE_URL=$MC_PACKAGE_URL" >> $GITHUB_ENV
+          curl --silent --fail --location "${MC_PACKAGE_URL}" --output hazelcast-management-center-${MC_VERSION}.tar.gz 
+
+      - name: Create & Sign & Upload RPM package
+        run: |
+          ./build-mc-rpm-package.sh
+
+      - name: Calculate YUM Repository Metadata
+        run: |
+          pwd
+          ls -lah
+          source ./common.sh
+
+          curl -H "Authorization: Bearer ${{ secrets.ARTIFACTORY_SECRET }}" \
+            -X POST "https://repository.hazelcast.com/api/yum/${RPM_REPO}"
+
+      - name: Install MC from RPM
+        run: |
+          source ./common.sh
+          yum install -y wget
+          wget ${RPM_REPO_BASE_URL}/${PACKAGE_REPO}/hazelcast-rpm-${PACKAGE_REPO}.repo -O hazelcast-rpm-${PACKAGE_REPO}.repo
+          mv hazelcast-rpm-${PACKAGE_REPO}.repo /etc/yum.repos.d/
+          yum install -y hazelcast-management-center-${RPM_MC_VERSION}
+          export JAVA_OPTS="-Dhazelcast.mc.healthCheck.enable=true"
+          /usr/lib/hazelcast-management-center/bin/start.sh > hz-mc.log 2>&1 &
+
+      - name: Check MC health
+        run: |
+          ./check-mc-health.sh
+
+      - name: Uninstall CLI from rpm
+        run: |
+          source ./common.sh
+          yum remove -y hazelcast-management-center-${RPM_PACKAGE_VERSION}
+      - name: Get homebrew repository
+        run: |
+          source ./common.sh
+          echo "BREW_GIT_REPO_NAME=${BREW_GIT_REPO_NAME}" >> $GITHUB_ENV
+
+      - name: Remove rpm package from test repo
+        if: github.event_name == 'pull_request'
+        run: |
+          source ./common.sh
+          curl -H "Authorization: Bearer ${{ secrets.ARTIFACTORY_SECRET }}" \
+            -X DELETE \
+            "$RPM_REPO_BASE_URL/${PACKAGE_REPO}/hazelcast-management-center-${RPM_PACKAGE_VERSION}.noarch.rpm"
+
+  homebrew:
+    runs-on: macos-latest
+    env:
+      MC_VERSION: ${{ needs.prepare.outputs.mc_version }}
+      PACKAGE_VERSION: ${{ needs.prepare.outputs.package_version }}
+    defaults:
+      run:
+        working-directory: ./management-center-packaging
+    needs: [prepare]
+    steps:
+      - name: Checkout management-center-packaging repo
+        uses: actions/checkout@v2.3.2
+        with:
+          path: 'management-center-packaging'
+
+      - name: Install up-to-date tools
+        run: |
+          brew install gnu-sed
+          brew install coreutils
+
+          PATH="/usr/local/opt/gnu-sed/libexec/gnubin:$PATH"
+          sed --version
+          PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
+          sha256sum --version
+          echo "PATH=/usr/local/opt/coreutils/libexec/gnubin:/usr/local/opt/gnu-sed/libexec/gnubin:$PATH" >> $GITHUB_ENV
+
+      - name: Setup JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: '8'
+          architecture: 'x64'
+
+      - name: Run script tests
+        run: |
+          ./test.sh
+
+      - name: Get homebrew repository
+        run: |
+          source ./common.sh
+          echo "BREW_GIT_REPO_NAME=${BREW_GIT_REPO_NAME}" >> $GITHUB_ENV
+
+      - name: Checkout homebrew-hz repo
+        uses: actions/checkout@v2.3.1
+        with:
+          repository: ${{ env.BREW_GIT_REPO_NAME }}
+          ref: master
+          token: ${{ secrets.GH_PAT }}
+          path: 'homebrew-hz'
+
+      - name: Download the distribution tar.gz file
+        run: |
+          if [[ "${MC_VERSION}" != *SNAPSHOT* ]]; then
+            VERSION="${MC_VERSION}"
+          else
+            VERSION=latest-snapshot
+          fi
+          MC_PACKAGE_URL="https://repository.hazelcast.com/download/management-center/hazelcast-management-center-${VERSION}.tar.gz"
+          echo "MC_PACKAGE_URL=$MC_PACKAGE_URL" >> $GITHUB_ENV
+          curl --silent --fail --location "${MC_PACKAGE_URL}" --output hazelcast-management-center-${MC_VERSION}.tar.gz 
+
+      - name: Change the artifact in homebrew-hz
+        run: |
+          ./build-mc-homebrew-package.sh
+
+      - name: Commit changes & Push to homebrew-hz repo
+        run: |
+          source common.sh
+
+          cd ../homebrew-hz
+          git config --global user.name 'devOpsHazelcast'
+          git config --global user.email 'devops@hazelcast.com'
+          git add *rb
+          if [[ `git status --porcelain --untracked-files=no` ]]; then
+            git commit -am "Hazelcast Management Center ${{ env.PACKAGE_VERSION }} release"
+            git pull --rebase
+            git push
+          else
+            echo "No changes, this is probably a re-run."
+          fi
+
+      - name: Install Hazelcast Management Center from Homebrew
+        run: |
+          source ./common.sh
+          brew tap ${BREW_TAP_NAME}
+          brew install hazelcast-management-center@$BREW_PACKAGE_VERSION
+          echo "MC_PATH=$(brew --prefix hazelcast-management-center@$BREW_PACKAGE_VERSION)" >> $GITHUB_ENV
+
+      - name: Run Hazelcast Management Center
+        run: |
+          export JAVA_OPTS="-Dhazelcast.mc.healthCheck.enable=true"
+          ${{ env.MC_PATH }}/libexec/bin/start.sh > hz-mc.log 2>&1 &
+
+      - name: Check Hazelcast Management Center Health
+        run: |
+          ./check-mc-health.sh
+
+      - name: Uninstall Hazelcast Management Center from Homebrew
+        run: |
+          source ./common.sh          
+          brew uninstall hazelcast-management-center@$BREW_PACKAGE_VERSION
