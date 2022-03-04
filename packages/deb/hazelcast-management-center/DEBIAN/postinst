@@ -19,3 +19,4 @@ if command -v systemctl > /dev/null; then
 fi
 
 printf "\nHazelcast Management Center has been successfully installed to '/usr/lib/hazelcast-management-center/'\n"
+printf "\nUse 'hz-mc start' or 'systemctl start hazelcast-management-center' to start the Hazelcast Management Center server\n"
