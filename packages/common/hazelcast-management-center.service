@@ -10,6 +10,8 @@ SuccessExitStatus=143
 
 Type=simple
 
+Environment="JAVA_OPTS=-Dhazelcast.mc.home=/usr/lib/hazelcast-management-center"
+WorkingDirectory=/usr/lib/hazelcast-management-center/bin
 ExecStart=/usr/lib/hazelcast-management-center/start.sh
 ExecStop=/bin/kill -15 $MAINPID
 

@@ -58,7 +58,6 @@ for FILENAME in %{buildroot}/%{_prefix}/lib/%{name}/bin/*mc*; do
     *bat)
       ;;
     *)
-      echo "Filename: ${FILENAME}"
       %{__ln_s} %{_prefix}/lib/%{name}/bin/"$(basename "${FILENAME}")" %{buildroot}/%{_bindir}/"$(basename "${FILENAME}")"
       ;;
   esac
@@ -68,10 +67,10 @@ done
 rm -rf $RPM_BUILD_ROOT
 
 %post
-chown -R hazelcast:hazelcast %{_prefix}/lib/hazelcast/
+chown -R hazelcast:hazelcast %{_prefix}/lib/hazelcast-management-center/
 %systemd_post %{name}.service
-printf "\n\nHazelcast Management Center is successfully installed to '%{_prefix}/lib/%{name}/'\n"
-printf "\n\nUse 'hz start' or 'systemctl start hazelcast' to start the Hazelcast server\n"
+printf "\nHazelcast Management Center has been successfully installed to '%{_prefix}/lib/%{name}/'\n"
+printf "\nUse 'hz-mc start' or 'systemctl start hazelcast-management-center' to start the Hazelcast Management Center server\n"
 
 %preun
 %systemd_preun %{name}.service

@@ -12,10 +12,11 @@ done
 
 groupadd -r hazelcast
 useradd -r -g hazelcast -d /usr/lib/hazelcast -s /sbin/nologin hazelcast
-chown -R hazelcast:hazelcast /usr/lib/hazelcast
+chown -R hazelcast:hazelcast /usr/lib/hazelcast-management-center
 
 if command -v systemctl > /dev/null; then
   systemctl daemon-reload
 fi
 
-printf "\n\nHazelcast Management Center is successfully installed to '/usr/lib/hazelcast-management-center/'\n"
+printf "\nHazelcast Management Center has been successfully installed to '/usr/lib/hazelcast-management-center/'\n"
+printf "\nUse 'hz-mc start' or 'systemctl start hazelcast-management-center' to start the Hazelcast Management Center server\n"
