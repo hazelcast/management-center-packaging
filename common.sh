@@ -12,6 +12,11 @@ if [[ "$MC_VERSION" == *"BETA"* ]]; then
 fi
 export PACKAGE_REPO=$RELEASE_TYPE
 
+# Extract minor version from HZ_VERSION, works also for 5.10 etc..
+# -d'.' splits by delimiter, -f selects first two components
+MC_MINOR_VERSION=$(echo "${MC_VERSION}" | cut -f1,2 -d'.')
+export MC_MINOR_VERSION
+
 # Extract release version from package version - release version is the version part specific to the package
 
 # Remove HZ_VERSION prefix from PACKAGE_VERSION,
