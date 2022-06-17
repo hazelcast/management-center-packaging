@@ -54,8 +54,6 @@ function generateFormula {
 BREW_CLASS=$(brewClass "hazelcast-management-center" "${BREW_PACKAGE_VERSION}")
 generateFormula "$BREW_CLASS" "hazelcast-management-center@${BREW_PACKAGE_VERSION}.rb"
 
-MC_MINOR_VERSION=$(echo "${MC_VERSION}" | cut -c -3)
-
 # Update hazelcast-management-center and hazelcast-management-center-x.y aliases
 # only if the version is release (not SNAPSHOT/DR/BETA)
 if [[ "$RELEASE_TYPE" = "stable" ]]; then
