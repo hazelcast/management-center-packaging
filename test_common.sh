@@ -62,4 +62,19 @@ assertPackageVersions "5.1-SNAPSHOT" "5.1-SNAPSHOT"  "5.1-SNAPSHOT-1"    "5.1.SN
 assertPackageVersions "5.1-BETA-1"   "5.1-BETA-1"    "5.1-BETA-1-1"      "5.1.BETA.1-1"
 assertPackageVersions "5.1-BETA-1"   "5.1-BETA-1-2"  "5.1-BETA-1-2"      "5.1.BETA.1-2"
 
+function assertMinorVersion {
+  export MC_VERSION=$1
+  local expected=$2
+  . "$SCRIPT_DIR"/common.sh
+  assert_eq "$expected" "$MC_MINOR_VERSION" "Version $MC_VERSION should be mapped to $MC_MINOR_VERSION minor version" || TESTS_RESULT=$?
+}
+
+log_header "Tests for HZ_MINOR_VERSION"
+assertMinorVersion "5.2-SNAPSHOT" "5.2-SNAPSHOT"
+assertMinorVersion "5.10" "5.10"
+assertMinorVersion "5.10.1" "5.10"
+assertMinorVersion "5.0" "5.0"
+assertMinorVersion "5.1.1" "5.1"
+
+
 assert_eq 0 "$TESTS_RESULT" "All tests should pass"
