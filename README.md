@@ -138,7 +138,7 @@ Search for available versions using the following command:
 brew search hazelcast-management-center
 ```
 
-## Running Hazelcast
+## Running Hazelcast Management Center
 
 After successful installation the commands from Hazelcast Management 
 Center distribution `bin` directory should be on path.
