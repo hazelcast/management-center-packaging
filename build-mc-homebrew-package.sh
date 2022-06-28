@@ -55,7 +55,7 @@ BREW_CLASS=$(brewClass "hazelcast-management-center" "${BREW_PACKAGE_VERSION}")
 generateFormula "$BREW_CLASS" "hazelcast-management-center@${BREW_PACKAGE_VERSION}.rb"
 
 # Update hazelcast-management-center and hazelcast-management-center-x.y aliases
-# only if the version is release (not SNAPSHOT/DR/BETA)
+# only if the version is a stable release (not SNAPSHOT/DEVEL/BETA)
 if [[ "$RELEASE_TYPE" = "stable" ]]; then
   BREW_CLASS=$(brewClass "hazelcast-management-center${MC_MINOR_VERSION}")
   generateFormula "$BREW_CLASS" "hazelcast-management-center-${MC_MINOR_VERSION}.rb"
@@ -77,7 +77,7 @@ if [[ "$RELEASE_TYPE" = "stable" ]]; then
     generateFormula "$(alphanumCamelCase "hazelcast-management-center")" "hazelcast-management-center.rb"
   fi
 else
-  # Update 'hazelcast-snapshot/beta/dr'
+  # Update 'hazelcast-snapshot/beta/devel'
   # only if the version is greater than (new release) or equal to highest version
   UPDATE_LATEST="true"
   versions=("hazelcast-management-center"-[0-9]*\.rb)
