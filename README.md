@@ -49,6 +49,29 @@ brew tap hazelcast/hz
 brew install hazelcast-management-center
 ```
 
+## Upgrading
+
+Use default commands of your package manager to perform the upgrade of the installed `hazelcast-management-center` package
+
+### Upgrade with apt
+
+```shell
+sudo apt update
+sudo apt install hazelcast-management-center
+```
+
+### Upgrade with yum/dnf/microdnf
+
+```shell
+sudo yum update hazelcast-management-center
+```
+
+### Upgrade with Homebrew
+
+```shell
+brew install hazelcast-management-center
+```
+
 ## Installing an older version and preventing upgrades
 
 ### Install an older version with apt
