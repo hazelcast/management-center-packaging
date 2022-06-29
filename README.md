@@ -49,6 +49,29 @@ brew tap hazelcast/hz
 brew install hazelcast-management-center
 ```
 
+## Upgrading
+
+Use default commands of your package manager to perform the upgrade of the installed `hazelcast-management-center` package
+
+### Upgrade with apt
+
+```shell
+sudo apt update
+sudo apt install hazelcast-management-center
+```
+
+### Upgrade with yum/dnf/microdnf
+
+```shell
+sudo yum update hazelcast-management-center
+```
+
+### Upgrade with Homebrew
+
+```shell
+brew install hazelcast-management-center
+```
+
 ## Installing an older version and preventing upgrades
 
 ### Install an older version with apt
@@ -92,11 +115,11 @@ Run the following to install e.g. version `5.0.1`:
 brew install hazelcast-management-center@5.0.1
 ```
 
-## Installing a SNAPSHOT/BETA/DR version
+## Installing a SNAPSHOT/DEVEL/BETA version
 
-### Install a SNAPSHOT/BETA/DR version with apt
+### Install a SNAPSHOT/DEVEL/BETA version with apt
 
-You need to replace `stable` with `snapshot`/`beta`/`devel` in the
+You need to replace `stable` with `snapshot`/`devel`/`beta` in the
 repository definition to use Hazelcast Management Center snapshots.
 
 Run the following to install the latest snapshot version:
@@ -107,9 +130,9 @@ echo "deb https://repository.hazelcast.com/debian snapshot main" | sudo tee -a /
 sudo apt update && sudo apt install hazelcast-management-center
 ```
 
-### Install a SNAPSHOT/BETA/DR version with yum
+### Install a SNAPSHOT/DEVEL/BETA version with yum
 
-You need to replace `stable` with `snapshot`/`beta`/`devel` in the
+You need to replace `stable` with `snapshot`/`devel`/`beta` in the
 repository definition to use Hazelcast Management Center snapshots.
 
 Run the following to install the latest snapshot version:
@@ -120,9 +143,9 @@ sudo mv hazelcast-snapshot-rpm.repo /etc/yum.repos.d/
 sudo yum install hazelcast-management-center
 ```
 
-### Install a SNAPSHOT/BETA/DR version with Homebrew
+### Install a SNAPSHOT/DEVEL/BETA version with Homebrew
 
-You need to add `snapshot`/`beta`/`dr` suffix to the package version when
+You need to add `snapshot`/`devel`/`beta` suffix to the package version when
 installing a snapshot.
 
 Run the following to install the latest `5.1-SNAPSHOT` version:
