@@ -38,9 +38,8 @@ env:
   HZ_LICENSEKEY: ${{ secrets.HZ_LICENSEKEY }}
 
 
-concurrency:
-  group: publish-${{ github.event_name == 'pull_request' && github.head_ref || github.sha }}
-  cancel-in-progress: true
+# Constant for now - should ensure single build, maybe we can limit this to something from github.*
+concurrency: single-build
 
 jobs:
   prepare:
