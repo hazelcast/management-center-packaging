@@ -49,18 +49,23 @@ function generateFormula {
   updateClassName "$class" "$file"
   sed -i "s+url.*$+url \"${MC_PACKAGE_URL}\"+g" "$file"
   sed -i "s+sha256.*$+sha256 \"${ASSET_SHASUM}\"+g" "$file"
+  all_hz_versions=({hazelcast-management-center.rb,hazelcast-management-center-devel.rb,hazelcast-management-center-snapshot.rb,hazelcast-management-center?[0-9]*\.rb})
+  for version in "${all_hz_versions[@]}"
+  do
+    if [[ "$version" != "$file" ]] && [[ ! "$version" =~ .*(beta|devel).* ]] ; then
+      sed -i "/sha256.*$/a \ \ \ \ conflicts_with \"${version%.rb}\", because: \"you can install only a single hazelcast-management-center package\"" "$file"
+    fi
+  done
 }
 
 BREW_CLASS=$(brewClass "hazelcast-management-center" "${BREW_PACKAGE_VERSION}")
 generateFormula "$BREW_CLASS" "hazelcast-management-center@${BREW_PACKAGE_VERSION}.rb"
 
 # Update hazelcast-management-center and hazelcast-management-center-x.y aliases
-# only if the version is release (not SNAPSHOT/DR/BETA)
+# only if the version is a stable release (not SNAPSHOT/DEVEL/BETA)
 if [[ "$RELEASE_TYPE" = "stable" ]]; then
   BREW_CLASS=$(brewClass "hazelcast-management-center${MC_MINOR_VERSION}")
   generateFormula "$BREW_CLASS" "hazelcast-management-center-${MC_MINOR_VERSION}.rb"
-
-  cp "hazelcast-management-center@${BREW_PACKAGE_VERSION}.rb" "hazelcast-management-center-${MC_MINOR_VERSION}"
 
   # Update 'hazelcast-management-center' alias
   # only if the version is greater than (new release) or equal to highest version
@@ -77,7 +82,7 @@ if [[ "$RELEASE_TYPE" = "stable" ]]; then
     generateFormula "$(alphanumCamelCase "hazelcast-management-center")" "hazelcast-management-center.rb"
   fi
 else
-  # Update 'hazelcast-snapshot/beta/dr'
+  # Update 'hazelcast-snapshot/beta/devel'
   # only if the version is greater than (new release) or equal to highest version
   UPDATE_LATEST="true"
   versions=("hazelcast-management-center"-[0-9]*\.rb)
