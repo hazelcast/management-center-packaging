@@ -53,7 +53,7 @@ jobs:
     outputs:
       mc_version: ${{ steps.mc_version.outputs.mc_version }}
       package_version: ${{ steps.package_version.outputs.package_version }}
-      package_types: ${{ github.event.inputs.package_types || 'all' }}
+      package_types: ${{ inputs.package_types || 'all' }}
     steps:
       - name: Checkout management-center-packaging repo
         uses: actions/checkout@v3
