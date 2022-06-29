@@ -18,7 +18,7 @@ on:
         type: string
         description: 'Version of Hazelcast Management Center to build the image for, this is the Maven version - e.g.: 5.0.2 or 5.1-SNAPSHOT'
         required: true
-      PACKAGE_TYPES:
+      package_types:
         description: 'Packages to build'
         required: true
         default: 'all'
