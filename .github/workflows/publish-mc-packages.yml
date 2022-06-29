@@ -139,8 +139,7 @@ jobs:
           wget -qO - https://repository.hazelcast.com/api/gpg/key/public | sudo apt-key add -
           echo "deb ${DEBIAN_REPO_BASE_URL} ${PACKAGE_REPO} main" | sudo tee -a /etc/apt/sources.list
           sudo apt update && sudo apt install hazelcast-management-center=${MC_VERSION}
-          export JAVA_OPTS="-Dhazelcast.mc.healthCheck.enable=true"
-          /usr/lib/hazelcast-management-center/bin/start.sh > hz-mc.log 2>&1 &
+          /usr/lib/hazelcast-management-center/bin/hz-mc start -Dhazelcast.mc.healthCheck.enable=true > hz-mc.log 2>&1 &
 
       - name: Check Hazelcast Management Center Health
         run: |
@@ -218,8 +217,7 @@ jobs:
           wget ${RPM_REPO_BASE_URL}/${PACKAGE_REPO}/hazelcast-rpm-${PACKAGE_REPO}.repo -O hazelcast-rpm-${PACKAGE_REPO}.repo
           mv hazelcast-rpm-${PACKAGE_REPO}.repo /etc/yum.repos.d/
           yum install -y hazelcast-management-center-${RPM_MC_VERSION}
-          export JAVA_OPTS="-Dhazelcast.mc.healthCheck.enable=true"
-          /usr/lib/hazelcast-management-center/bin/start.sh > hz-mc.log 2>&1 &
+          /usr/lib/hazelcast-management-center/bin/hz-mc start -Dhazelcast.mc.healthCheck.enable=true > hz-mc.log 2>&1 &
 
       - name: Check MC health
         run: |
@@ -333,8 +331,7 @@ jobs:
 
       - name: Run Hazelcast Management Center
         run: |
-          export JAVA_OPTS="-Dhazelcast.mc.healthCheck.enable=true"
-          ${{ env.MC_PATH }}/libexec/bin/start.sh > hz-mc.log 2>&1 &
+          ${{ env.MC_PATH }}/libexec/bin/hz-mc start -Dhazelcast.mc.healthCheck.enable=true > hz-mc.log 2>&1 &
 
       - name: Check Hazelcast Management Center Health
         run: |
