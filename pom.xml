@@ -5,14 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.hazelcast</groupId>
-    <artifactId>hazelcast-command-line</artifactId>
-    <version>5.1.1</version>
+    <artifactId>management-center-packaging</artifactId>
+    <version>5.1.2</version>
 
     <description>A pom.xml file with repository definitions so we can use maven to fetch tar artifacts.</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <hazelcast.mc.version>5.1.1</hazelcast.mc.version>
     </properties>
 
     <repositories>
