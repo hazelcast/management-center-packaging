@@ -47,6 +47,7 @@ function generateFormula {
   echo "Generating $file formula"
   cp "$TEMPLATE_FILE" "$file"
   updateClassName "$class" "$file"
+  sed -i "s+version.*$+version \"${MC_VERSION}\"+g" "$file"
   sed -i "s+url.*$+url \"${MC_PACKAGE_URL}\"+g" "$file"
   sed -i "s+sha256.*$+sha256 \"${ASSET_SHASUM}\"+g" "$file"
   all_hz_versions=({hazelcast-management-center.rb,hazelcast-management-center-devel.rb,hazelcast-management-center-snapshot.rb,hazelcast-management-center?[0-9]*\.rb})
