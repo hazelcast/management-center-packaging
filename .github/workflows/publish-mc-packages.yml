@@ -161,7 +161,7 @@ jobs:
   rpm:
     runs-on: ubuntu-latest
     if: ${{ needs.prepare.outputs.package_types == 'all' || needs.prepare.outputs.package_types == 'rpm' }}
-    container: rockylinux:latest
+    container: rockylinux:9
     env:
       MC_VERSION: ${{ needs.prepare.outputs.mc_version }}
       PACKAGE_VERSION: ${{ needs.prepare.outputs.package_version }}
