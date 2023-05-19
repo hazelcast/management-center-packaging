@@ -62,7 +62,7 @@ jobs:
       - name: Setup JDK
         uses: actions/setup-java@v3
         with:
-          java-version: '8'
+          java-version: '11'
           architecture: 'x64'
           distribution: 'temurin'
 
@@ -107,7 +107,7 @@ jobs:
       - name: Setup JDK
         uses: actions/setup-java@v3
         with:
-          java-version: '8'
+          java-version: '11'
           architecture: 'x64'
           distribution: 'temurin'
 
@@ -178,7 +178,7 @@ jobs:
       - name: Setup JDK
         uses: actions/setup-java@v3
         with:
-          java-version: '8'
+          java-version: '11'
           architecture: 'x64'
           distribution: 'temurin'
 
@@ -270,7 +270,7 @@ jobs:
       - name: Setup JDK
         uses: actions/setup-java@v3
         with:
-          java-version: '8'
+          java-version: '11'
           architecture: 'x64'
           distribution: 'temurin'
 
