@@ -32,7 +32,7 @@ on:
 env:
   EVENT_NAME: ${{ github.event_name }}
   PUBLISH: "true"
-  ARTIFACTORY_SECRET: ${{ secrets.ARTIFACTORY_SECRET }}
+  JFROG_TOKEN: ${{ secrets.JFROG_TOKEN }}
   DEVOPS_PRIVATE_KEY: ${{ secrets.DEVOPS_PRIVATE_KEY }}
   BINTRAY_PASSPHRASE: ${{ secrets.BINTRAY_PASSPHRASE }}
   HZ_LICENSEKEY: ${{ secrets.HZ_LICENSEKEY }}
@@ -73,7 +73,7 @@ jobs:
             MC_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           fi
           echo "MC_VERSION=$MC_VERSION" >> $GITHUB_ENV
-          echo ::set-output name=mc_version::$MC_VERSION
+          echo "mc_version=$MC_VERSION" >> $GITHUB_OUTPUT
 
       - name: Set PACKAGE_VERSION
         id: package_version
@@ -86,7 +86,7 @@ jobs:
             PACKAGE_VERSION=${{ env.MC_VERSION }}
           fi
           echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> $GITHUB_ENV
-          echo ::set-output name=package_version::$PACKAGE_VERSION
+          echo "package_version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
 
   deb:
     runs-on: ubuntu-latest
@@ -130,7 +130,7 @@ jobs:
         run: |
           source common.sh
 
-          curl --fail-with-body --retry 3 --retry-delay 10 -H "Authorization: Bearer ${{ secrets.ARTIFACTORY_SECRET }}" \
+          curl --fail-with-body --retry 3 --retry-delay 10 -H "Authorization: Bearer ${{ secrets.JFROG_TOKEN }}" \
             -X POST "https://repository.hazelcast.com/api/deb/reindex/${DEBIAN_REPO}"
 
       - name: Install Hazelcast Management Center from DEB
@@ -154,7 +154,7 @@ jobs:
         if: github.event_name == 'pull_request'
         run: |
           source ./common.sh
-          curl -H "Authorization: Bearer ${{ secrets.ARTIFACTORY_SECRET }}" \
+          curl -H "Authorization: Bearer ${{ secrets.JFROG_TOKEN }}" \
             -X DELETE \
             "$DEBIAN_REPO_BASE_URL/hazelcast-management-center-${DEB_PACKAGE_VERSION}-all.deb"
 
@@ -207,7 +207,7 @@ jobs:
           ls -lah
           source ./common.sh
 
-          curl --fail-with-body --retry 3 --retry-delay 10 -H "Authorization: Bearer ${{ secrets.ARTIFACTORY_SECRET }}" \
+          curl --fail-with-body --retry 3 --retry-delay 10 -H "Authorization: Bearer ${{ secrets.JFROG_TOKEN }}" \
             -X POST "https://repository.hazelcast.com/api/yum/${RPM_REPO}"
 
       - name: Install MC from RPM
@@ -236,7 +236,7 @@ jobs:
         if: github.event_name == 'pull_request'
         run: |
           source ./common.sh
-          curl -H "Authorization: Bearer ${{ secrets.ARTIFACTORY_SECRET }}" \
+          curl -H "Authorization: Bearer ${{ secrets.JFROG_TOKEN }}" \
             -X DELETE \
             "$RPM_REPO_BASE_URL/${PACKAGE_REPO}/hazelcast-management-center-${RPM_PACKAGE_VERSION}.noarch.rpm"
 
