@@ -130,7 +130,7 @@ jobs:
         run: |
           source common.sh
 
-          curl -H "Authorization: Bearer ${{ secrets.ARTIFACTORY_SECRET }}" \
+          curl --fail-with-body --retry 3 --retry-delay 10 -H "Authorization: Bearer ${{ secrets.ARTIFACTORY_SECRET }}" \
             -X POST "https://repository.hazelcast.com/api/deb/reindex/${DEBIAN_REPO}"
 
       - name: Install Hazelcast Management Center from DEB
@@ -207,7 +207,7 @@ jobs:
           ls -lah
           source ./common.sh
 
-          curl -H "Authorization: Bearer ${{ secrets.ARTIFACTORY_SECRET }}" \
+          curl --fail-with-body --retry 3 --retry-delay 10 -H "Authorization: Bearer ${{ secrets.ARTIFACTORY_SECRET }}" \
             -X POST "https://repository.hazelcast.com/api/yum/${RPM_REPO}"
 
       - name: Install MC from RPM
