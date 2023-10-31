@@ -331,7 +331,7 @@ jobs:
 
       - name: Run Hazelcast Management Center
         run: |
-          ${{ env.MC_PATH }}/libexec/bin/hz-mc start -Dhazelcast.mc.healthCheck.enable=true > hz-mc.log 2>&1 &
+          ${{ env.MC_PATH }}/libexec/bin/hz-mc start -Dhazelcast.mc.home=~/ -Dhazelcast.mc.healthCheck.enable=true > hz-mc.log 2>&1 &
 
       - name: Check Hazelcast Management Center Health
         run: |
