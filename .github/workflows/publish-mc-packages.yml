@@ -60,7 +60,7 @@ jobs:
           path: 'management-center-packaging'
 
       - name: Setup JDK
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '11'
           architecture: 'x64'
@@ -105,7 +105,7 @@ jobs:
           path: 'management-center-packaging'
 
       - name: Setup JDK
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '11'
           architecture: 'x64'
@@ -176,7 +176,7 @@ jobs:
           path: 'management-center-packaging'
 
       - name: Setup JDK
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '11'
           architecture: 'x64'
@@ -268,7 +268,7 @@ jobs:
           echo "PATH=/usr/local/opt/coreutils/libexec/gnubin:/usr/local/opt/gnu-sed/libexec/gnubin:$PATH" >> $GITHUB_ENV
 
       - name: Setup JDK
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '11'
           architecture: 'x64'
