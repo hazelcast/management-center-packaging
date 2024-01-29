@@ -18,7 +18,7 @@ Source1:    hazelcast-management-center.service
 
 Requires(pre): shadow-utils
 
-Requires:	java-headless
+Requires:	java-21
 
 BuildArch:  noarch
 BuildRequires: systemd-rpm-macros

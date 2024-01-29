@@ -36,7 +36,9 @@ env:
   DEVOPS_PRIVATE_KEY: ${{ secrets.DEVOPS_PRIVATE_KEY }}
   BINTRAY_PASSPHRASE: ${{ secrets.BINTRAY_PASSPHRASE }}
   HZ_LICENSEKEY: ${{ secrets.HZ_LICENSEKEY }}
-
+  JAVA_VERSION: "21"
+  JAVA_DISTRIBUTION: "temurin"
+  JAVA_ARCH: "x64"
 
 # Constant for now - should ensure single build, maybe we can limit this to something from github.*
 concurrency: single-build
@@ -62,9 +64,9 @@ jobs:
       - name: Setup JDK
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
-          architecture: 'x64'
-          distribution: 'temurin'
+          java-version: ${{ env.JAVA_VERSION }}
+          architecture: ${{ env.JAVA_ARCH }}
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
 
       - name: Set MC_VERSION
         id: mc_version
@@ -107,9 +109,10 @@ jobs:
       - name: Setup JDK
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
-          architecture: 'x64'
-          distribution: 'temurin'
+          java-version: ${{ env.JAVA_VERSION }}
+          architecture: ${{ env.JAVA_ARCH }}
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+
 
       - name: Download the distribution tar.gz file
         run: |          
@@ -178,9 +181,9 @@ jobs:
       - name: Setup JDK
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
-          architecture: 'x64'
-          distribution: 'temurin'
+          java-version: ${{ env.JAVA_VERSION }}
+          architecture: ${{ env.JAVA_ARCH }}
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
 
       - name: Install Required tools
         run: |
@@ -270,9 +273,9 @@ jobs:
       - name: Setup JDK
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
-          architecture: 'x64'
-          distribution: 'temurin'
+          java-version: ${{ env.JAVA_VERSION }}
+          architecture: ${{ env.JAVA_ARCH }}
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
 
       - name: Run script tests
         run: |
