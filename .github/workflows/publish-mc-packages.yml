@@ -62,7 +62,7 @@ jobs:
       - name: Setup JDK
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '21'
           architecture: 'x64'
           distribution: 'temurin'
 
@@ -107,7 +107,7 @@ jobs:
       - name: Setup JDK
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '21'
           architecture: 'x64'
           distribution: 'temurin'
 
@@ -178,7 +178,7 @@ jobs:
       - name: Setup JDK
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '21'
           architecture: 'x64'
           distribution: 'temurin'
 
@@ -270,7 +270,7 @@ jobs:
       - name: Setup JDK
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '21'
           architecture: 'x64'
           distribution: 'temurin'
 
