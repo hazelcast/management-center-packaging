@@ -113,7 +113,6 @@ jobs:
           architecture: ${{ env.JAVA_ARCH }}
           distribution: ${{ env.JAVA_DISTRIBUTION }}
 
-
       - name: Download the distribution tar.gz file
         run: |          
           if [[ "${MC_VERSION}" != *SNAPSHOT* ]]; then
