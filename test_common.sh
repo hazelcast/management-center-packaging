@@ -21,12 +21,17 @@ function findScriptDir() {
   cd "$CURRENT" || exit
 }
 
+# Source the latest version of assert.sh unit testing library and include in current shell
+curl --silent https://raw.githubusercontent.com/hazelcast/assert.sh/main/assert.sh --output assert.sh
+
+# shellcheck source=/dev/null
+# You _should_ be able to avoid a temporary file with something like
+# . <(echo "${assert_script_content}")
+# But this doesn't work on the MacOS GitHub runner (but does on MacOS locally)
+. assert.sh
+
 findScriptDir
 
-# Source the latest version of assert.sh unit testing library and include in current shell
-assert_script_content=$(curl --silent https://raw.githubusercontent.com/hazelcast/assert.sh/main/assert.sh)
-# shellcheck source=/dev/null
-. <(echo "${assert_script_content}")
 . "$SCRIPT_DIR"/common.sh
 
 TESTS_RESULT=0
