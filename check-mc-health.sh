@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 attempts=0
 max_attempts=30

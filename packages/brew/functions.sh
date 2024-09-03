@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 function alphanumCamelCase {
   echo "$1"|  sed -r 's/(-)/\./g' | tr '[:upper:]' '[:lower:]' | sed "s/\b\(.\)/\u\1/g" | sed 's+\.++g'
