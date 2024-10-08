@@ -45,7 +45,7 @@ concurrency: single-build
 
 jobs:
   prepare:
-    runs-on: ubuntu-latest
+    runs-on: ubicloud-standard-2
     env:
       MC_VERSION: ${{ inputs.MC_VERSION }}
     defaults:
@@ -91,7 +91,7 @@ jobs:
           echo "package_version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
 
   deb:
-    runs-on: ubuntu-latest
+    runs-on: ubicloud-standard-2
     if: ${{ needs.prepare.outputs.package_types == 'all' || needs.prepare.outputs.package_types == 'deb' }}
     env:
       MC_VERSION: ${{ needs.prepare.outputs.mc_version }}
@@ -161,7 +161,7 @@ jobs:
             "$DEBIAN_REPO_BASE_URL/hazelcast-management-center-${DEB_PACKAGE_VERSION}-all.deb"
 
   rpm:
-    runs-on: ubuntu-latest
+    runs-on: ubicloud-standard-2
     if: ${{ needs.prepare.outputs.package_types == 'all' || needs.prepare.outputs.package_types == 'rpm' }}
     container: rockylinux:9
     env:
