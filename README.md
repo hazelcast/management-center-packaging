@@ -11,7 +11,7 @@ or Homebrew package.
 
 ## Install latest stable version of Hazelcast Management Center
 
-This version is suitable for most users of Hazelcast. When unsure, use
+This version is suitable for most users of Hazelcast Management Center. When unsure, use
 this version.
 
 ### Install with apt
@@ -115,11 +115,11 @@ Run the following to install e.g. version `5.0.1`:
 brew install hazelcast-management-center@5.0.1
 ```
 
-## Installing a SNAPSHOT/DEVEL/BETA version
+## Installing a SNAPSHOT version
 
-### Install a SNAPSHOT/DEVEL/BETA version with apt
+### Install a SNAPSHOT version with apt
 
-You need to replace `stable` with `snapshot`/`devel`/`beta` in the
+You need to replace `stable` with `snapshot` in the
 repository definition to use Hazelcast Management Center snapshots.
 
 Run the following to install the latest snapshot version:
@@ -130,9 +130,9 @@ echo "deb https://repository.hazelcast.com/debian snapshot main" | sudo tee -a /
 sudo apt update && sudo apt install hazelcast-management-center
 ```
 
-### Install a SNAPSHOT/DEVEL/BETA version with yum
+### Install a SNAPSHOT version with yum
 
-You need to replace `stable` with `snapshot`/`devel`/`beta` in the
+You need to replace `stable` with `snapshot` in the
 repository definition to use Hazelcast Management Center snapshots.
 
 Run the following to install the latest snapshot version:
@@ -143,16 +143,16 @@ sudo mv hazelcast-snapshot-rpm.repo /etc/yum.repos.d/
 sudo yum install hazelcast-management-center
 ```
 
-### Install a SNAPSHOT/DEVEL/BETA version with Homebrew
+### Install a SNAPSHOT version with Homebrew
 
-You need to add `snapshot`/`devel`/`beta` suffix to the package version when
+You need to add `snapshot` suffix to the package version when
 installing a snapshot.
 
-Run the following to install the latest `5.1-SNAPSHOT` version:
+Run the following to install the latest `6.0-SNAPSHOT` version:
 
 ```
 brew tap hazelcast/hz
-brew install hazelcast-management-center@5.1.snapshot
+brew install hazelcast-management-center@6.0.snapshot
 ```
 
 Search for available versions using the following command:
