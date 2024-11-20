@@ -215,7 +215,10 @@ jobs:
         run: |
           source ./common.sh
           yum install -y wget
-          wget ${RPM_REPO_BASE_URL}/${PACKAGE_REPO}/hazelcast-rpm-${PACKAGE_REPO}.repo -O hazelcast-rpm-${PACKAGE_REPO}.repo
+          wget \
+            ${RPM_REPO_BASE_URL}/${PACKAGE_REPO}/hazelcast-rpm-${PACKAGE_REPO}.repo \
+            --header "Authorization: Bearer ${{ env.JFROG_TOKEN }}" \
+            --output-document hazelcast-rpm-${PACKAGE_REPO}.repo
           mv hazelcast-rpm-${PACKAGE_REPO}.repo /etc/yum.repos.d/
           yum install -y hazelcast-management-center-${RPM_MC_VERSION}
           /usr/lib/hazelcast-management-center/bin/hz-mc start -Dhazelcast.mc.healthCheck.enable=true > hz-mc.log 2>&1 &
