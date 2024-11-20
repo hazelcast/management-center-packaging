@@ -104,6 +104,11 @@ jobs:
         working-directory: ./management-center-packaging
     needs: [prepare]
     steps:
+      - name: Install prerequisites
+        run: |
+          apt-get update
+          apt-get install -y curl
+
       - name: Checkout management-center-packaging repo
         uses: actions/checkout@v4.1.7
         with:
