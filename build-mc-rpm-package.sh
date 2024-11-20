@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -o errexit -o nounset -o pipefail ${RUNNER_DEBUG:+-x}
+set -x
 
 if [ -z "${MC_VERSION}" ]; then
   echo "Variable MC_VERSION is not set. This is the version of Hazelcast used to build the package."

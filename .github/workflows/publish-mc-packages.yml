@@ -112,7 +112,7 @@ jobs:
       - name: Install Required tools
         run: |
           apt-get update
-          apt-get install -y curl gettext-base gpg sudo wget
+          apt-get install -y curl gettext-base gpg sudo wget procps
 
       - name: Download the distribution tar.gz file
         run: |          
