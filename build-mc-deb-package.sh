@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-set -x
-
 if [ -z "${MC_VERSION}" ]; then
   echo "Variable MC_VERSION is not set. This is the version of Hazelcast Management Center used to build the package."
   exit 1
