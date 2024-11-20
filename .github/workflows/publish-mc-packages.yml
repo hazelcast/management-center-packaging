@@ -141,7 +141,7 @@ jobs:
           source ./common.sh
           wget -qO - https://repository.hazelcast.com/api/gpg/key/public | sudo apt-key add -
           echo "deb ${DEBIAN_REPO_BASE_URL} ${PACKAGE_REPO} main" | sudo tee -a /etc/apt/sources.list
-          sudo apt update && sudo apt install hazelcast-management-center=${MC_VERSION}
+          sudo apt-get update && sudo apt-get install hazelcast-management-center=${MC_VERSION}
           /usr/lib/hazelcast-management-center/bin/hz-mc start -Dhazelcast.mc.healthCheck.enable=true > hz-mc.log 2>&1 &
 
       - name: Check Hazelcast Management Center Health
@@ -151,7 +151,7 @@ jobs:
       - name: Uninstall CLI from deb
         run: |
           source ./common.sh
-          sudo apt remove hazelcast-management-center
+          sudo apt-get remove hazelcast-management-center
 
       - name: Remove deb package from test repo
         if: ${{ github.event_name == 'pull_request' && (success() || failure()) }}
