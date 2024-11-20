@@ -139,8 +139,14 @@ jobs:
       - name: Install Hazelcast Management Center from DEB
         run: |
           source ./common.sh
-          wget -qO - https://repository.hazelcast.com/api/gpg/key/public | sudo apt-key add -
-          echo "deb ${DEBIAN_REPO_BASE_URL} ${PACKAGE_REPO} main" | sudo tee -a /etc/apt/sources.list
+          wget \
+            https://repository.hazelcast.com/api/gpg/key/public \
+            --header "Authorization: Bearer ${{ secrets.JFROG_TOKEN }}" \
+            --output-document - \
+            --quiet \
+            | gpg --dearmor \
+            | sudo tee /usr/share/keyrings/hazelcast-archive-keyring.gpg > /dev/null
+          echo "deb [signed-by=/usr/share/keyrings/hazelcast-archive-keyring.gpg] ${DEBIAN_REPO_BASE_URL} ${PACKAGE_REPO} main" | sudo tee -a /etc/apt/sources.list
           sudo apt-get update && sudo apt-get install hazelcast-management-center=${MC_VERSION}
           /usr/lib/hazelcast-management-center/bin/hz-mc start -Dhazelcast.mc.healthCheck.enable=true > hz-mc.log 2>&1 &
 
