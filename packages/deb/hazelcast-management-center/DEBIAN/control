@@ -4,7 +4,7 @@ Version: ${PACKAGE_VERSION}
 Section: imdg
 Priority: optional
 Architecture: all
-Depends: java21-sdk-headless
+Depends: java21-sdk-headless | default-jdk-headless
 Maintainer: Hazelcast Platform Team <platform@hazelcast.com>
 Description: Hazelcast Management Center enables monitoring and management of nodes running Hazelcast.
 Homepage: https://www.hazelcast.com/
