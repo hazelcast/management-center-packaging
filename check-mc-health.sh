@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 attempts=0
-max_attempts=30
+max_attempts=60
 until $(curl --output /dev/null --silent --fail "http://localhost:8081/health"); do
   if [ ${attempts} -eq ${max_attempts} ];then
       echo "Hazelcast MC not responding"
