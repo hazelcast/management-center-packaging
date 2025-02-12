@@ -6,7 +6,7 @@
 
     <groupId>com.hazelcast</groupId>
     <artifactId>management-center-packaging</artifactId>
-    <version>5.4-SNAPSHOT</version>
+    <version>5.7.0</version>
 
     <description>A pom.xml file with repository definitions so we can use maven to fetch tar artifacts.</description>
 
