@@ -1,0 +1,49 @@
+name: Create tag from branch
+
+on:
+  workflow_dispatch:
+    inputs:
+      maintenance_branch:
+        type: string
+        description: 'The maintenance branch to tag _from_ (e.g. `5.5-maintenance`)'
+        required: true
+
+jobs:
+  create_tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout management-center-packaging repo
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.maintenance_branch }}
+
+      - name: Get current project version
+        run: |
+          echo "MC_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> ${GITHUB_ENV}
+
+      - uses: madhead/semver-utils@latest
+        id: version
+        with:
+          version: ${{ env.MC_VERSION }}
+
+      - name: Update the project version with the new version
+        run: |
+          mvn versions:set \
+            --batch-mode \
+            --no-transfer-progress \
+            -DnewVersion=${{ steps.version.outputs.inc-patch }}
+
+      - name: Configure git
+        run: |
+          git config user.name "${GITHUB_ACTOR}"
+          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+
+      - name: Commit and push changes
+        run: |
+          git commit --all -m ${{ steps.version.outputs.inc-patch }}
+          git push
+
+      - name: Create a tag that prefixes the new version with a v (for e.g. v5.1.4 for the 5.1.4 version)
+        run: |
+          git tag v${{ steps.version.outputs.inc-patch }}
+          git push origin v${{ steps.version.outputs.inc-patch }}
