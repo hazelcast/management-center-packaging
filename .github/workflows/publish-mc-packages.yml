@@ -232,10 +232,15 @@ jobs:
     env:
       MC_VERSION: ${{ needs.prepare.outputs.mc_version }}
       PACKAGE_VERSION: ${{ needs.prepare.outputs.package_version }}
+    defaults:
+      run:
+        working-directory: ./management-center-packaging
     needs: [prepare]
     steps:
       - name: Checkout management-center-packaging repo
         uses: actions/checkout@v4
+        with:
+          path: 'management-center-packaging'
 
       - name: Install up-to-date tools
         run: |
