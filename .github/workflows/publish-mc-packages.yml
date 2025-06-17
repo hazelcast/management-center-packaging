@@ -35,9 +35,6 @@ env:
   DEVOPS_PRIVATE_KEY: ${{ secrets.DEVOPS_PRIVATE_KEY }}
   BINTRAY_PASSPHRASE: ${{ secrets.BINTRAY_PASSPHRASE }}
   HZ_LICENSEKEY: ${{ secrets.HZ_LICENSEKEY }}
-  JAVA_VERSION: "21"
-  JAVA_DISTRIBUTION: "temurin"
-  JAVA_ARCH: "x64"
 
 # Constant for now - should ensure single build, maybe we can limit this to something from github.*
 concurrency: single-build
@@ -54,13 +51,6 @@ jobs:
     steps:
       - name: Checkout management-center-packaging repo
         uses: actions/checkout@v4
-
-      - name: Setup JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: ${{ env.JAVA_VERSION }}
-          architecture: ${{ env.JAVA_ARCH }}
-          distribution: ${{ env.JAVA_DISTRIBUTION }}
 
       - name: Set MC_VERSION
         id: mc_version
@@ -86,21 +76,24 @@ jobs:
 
   deb:
     runs-on: ubuntu-latest
+    container:
+      image: debian:stable
     if: ${{ needs.prepare.outputs.package_types == 'all' || needs.prepare.outputs.package_types == 'deb' }}
     env:
       MC_VERSION: ${{ needs.prepare.outputs.mc_version }}
       PACKAGE_VERSION: ${{ needs.prepare.outputs.package_version }}
+    defaults:
+      run:
+        shell: bash
     needs: [prepare]
     steps:
       - name: Checkout management-center-packaging repo
         uses: actions/checkout@v4
 
-      - name: Setup JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: ${{ env.JAVA_VERSION }}
-          architecture: ${{ env.JAVA_ARCH }}
-          distribution: ${{ env.JAVA_DISTRIBUTION }}
+      - name: Install prerequisites
+        run: |
+          apt-get update
+          apt-get install -y curl gettext-base gpg sudo wget
 
       - name: Download the distribution tar.gz file
         run: |          
@@ -160,13 +153,6 @@ jobs:
     steps:
       - name: Checkout management-center-packaging repo
         uses: actions/checkout@v4
-
-      - name: Setup JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: ${{ env.JAVA_VERSION }}
-          architecture: ${{ env.JAVA_ARCH }}
-          distribution: ${{ env.JAVA_DISTRIBUTION }}
 
       - name: Install Required tools
         run: |
@@ -252,13 +238,6 @@ jobs:
           PATH="$HOMEBREW_PREFIX/opt/coreutils/libexec/gnubin:$PATH"
           sha256sum --version
           echo "PATH=$HOMEBREW_PREFIX/opt/coreutils/libexec/gnubin:$HOMEBREW_PREFIX//opt/gnu-sed/libexec/gnubin:$PATH" >> $GITHUB_ENV
-
-      - name: Setup JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: ${{ env.JAVA_VERSION }}
-          architecture: ${{ env.JAVA_ARCH }}
-          distribution: ${{ env.JAVA_DISTRIBUTION }}
 
       - name: Run script tests
         run: |
