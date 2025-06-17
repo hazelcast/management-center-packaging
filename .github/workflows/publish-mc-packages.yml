@@ -44,9 +44,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       MC_VERSION: ${{ inputs.MC_VERSION }}
-    defaults:
-      run:
-        working-directory: ./management-center-packaging
     outputs:
       mc_version: ${{ steps.mc_version.outputs.mc_version }}
       package_version: ${{ steps.package_version.outputs.package_version }}
@@ -54,8 +51,6 @@ jobs:
     steps:
       - name: Checkout management-center-packaging repo
         uses: actions/checkout@v4
-        with:
-          path: 'management-center-packaging'
 
       - name: Set MC_VERSION
         id: mc_version
@@ -89,14 +84,11 @@ jobs:
       PACKAGE_VERSION: ${{ needs.prepare.outputs.package_version }}
     defaults:
       run:
-        working-directory: ./management-center-packaging
         shell: bash
     needs: [prepare]
     steps:
       - name: Checkout management-center-packaging repo
         uses: actions/checkout@v4
-        with:
-          path: 'management-center-packaging'
 
       - name: Install prerequisites
         run: |
@@ -157,15 +149,10 @@ jobs:
     env:
       MC_VERSION: ${{ needs.prepare.outputs.mc_version }}
       PACKAGE_VERSION: ${{ needs.prepare.outputs.package_version }}
-    defaults:
-      run:
-        working-directory: ./management-center-packaging
     needs: [prepare]
     steps:
       - name: Checkout management-center-packaging repo
         uses: actions/checkout@v4
-        with:
-          path: 'management-center-packaging'
 
       - name: Install Required tools
         run: |
