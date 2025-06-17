@@ -35,6 +35,7 @@ jobs:
           mvn versions:set \
             --batch-mode \
             --no-transfer-progress \
+            -DgenerateBackupPoms=false \
             -DnewVersion=${{ steps.version.outputs.inc-patch }}
 
       - name: Configure git
