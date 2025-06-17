@@ -3,15 +3,11 @@ name: Publish Hazelcast Management Center packages
 on:
   workflow_dispatch:
 
-env:
-  JFROG_USERNAME: ${{ secrets.JFROG_USERNAME }}
-  JFROG_TOKEN: ${{ secrets.JFROG_TOKEN }}
-
 jobs:
   deb:
     runs-on: ubuntu-latest
     steps:
       - run: |
           wget -qO - https://repository.hazelcast.com/api/gpg/key/public | gpg --dearmor | sudo tee /usr/share/keyrings/hazelcast-archive-keyring.gpg > /dev/null
-          echo "deb [signed-by=/usr/share/keyrings/hazelcast-archive-keyring.gpg] https://${JFROG_USERNAME}:${JFROG_TOKEN}@repository.hazelcast.com/debian-test-local snapshot main" | sudo tee -a /etc/apt/sources.list
+          echo "deb [signed-by=/usr/share/keyrings/hazelcast-archive-keyring.gpg] https://${{ secrets.JFROG_USERNAME }}:${{ secrets.JFROG_TOKEN }}@repository.hazelcast.com/debian-test-local snapshot main" | sudo tee -a /etc/apt/sources.list
           sudo apt update
