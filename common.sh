@@ -52,7 +52,7 @@ export BREW_PACKAGE_VERSION
 if [ "${EVENT_NAME}" == "pull_request" ]; then
   # PRs publish to test repositories and install the packages from there
   export DEBIAN_REPO=debian-test-local
-  export DEBIAN_REPO_BASE_URL="https://${JFROG_USERNAME}:${JFROG_TOKEN}@repository.hazelcast.com/${DEBIAN_REPO}"
+  export DEBIAN_REPO_BASE_URL="https://${JFROG_USERNAME}:${JFROG_TOKEN}@repository.hazelcast.com/debian-test-local"
   export RPM_REPO=rpm-test-local
 
   # This is a clone of the hazelcast/homebrew-hz repository
