@@ -20,7 +20,6 @@ on:
       package_types:
         description: 'Packages to build'
         required: true
-        default: 'all'
         type: choice
         options:
         - all
