@@ -133,7 +133,7 @@ jobs:
       - name: Uninstall CLI from deb
         run: |
           source ./common.sh
-          sudo apt remove hazelcast-management-center
+          sudo apt remove -y hazelcast-management-center
 
       - name: Remove deb package from test repo
         if: github.event_name == 'pull_request'
