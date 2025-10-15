@@ -14,7 +14,7 @@ jobs:
     env:
       # Workaround to ensure downstrem actions are triggeered by new tags
       # https://github.com/orgs/community/discussions/27028
-      GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+      GITHUB_TOKEN: ${{ secrets.DEVOPSHAZELCAST_PAT_FOR_MONOREPO }}
     steps:
       - name: Checkout management-center-packaging repo
         uses: actions/checkout@v5
@@ -54,3 +54,4 @@ jobs:
         run: |
           git commit --all -m ${{ steps.version.outputs.inc-patch }}
           git push
+
