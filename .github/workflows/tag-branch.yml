@@ -30,6 +30,18 @@ jobs:
         with:
           version: ${{ env.MC_VERSION }}
 
+      - name: Configure git
+        run: |
+          git config user.name "${GITHUB_ACTOR}"
+          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+
+      - name: Create tag
+        run: |
+          git tag "${TAG_NAME}"
+          git push origin "${TAG_NAME}"
+        env:
+          TAG_NAME: v${{ steps.version.outputs.release }}
+
       - name: Update the project version with the new version
         run: |
           mvn versions:set \
@@ -38,17 +50,7 @@ jobs:
             -DgenerateBackupPoms=false \
             -DnewVersion=${{ steps.version.outputs.inc-patch }}
 
-      - name: Configure git
-        run: |
-          git config user.name "${GITHUB_ACTOR}"
-          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-
       - name: Commit and push changes
         run: |
           git commit --all -m ${{ steps.version.outputs.inc-patch }}
           git push
-
-      - name: Create tag
-        run: |
-          git tag v${{ steps.version.outputs.inc-patch }}
-          git push origin v${{ steps.version.outputs.inc-patch }}
