@@ -11,10 +11,8 @@ on:
 jobs:
   create_tag:
     runs-on: ubuntu-latest
-    env:
-      # Workaround to ensure downstrem actions are triggeered by new tags
-      # https://github.com/orgs/community/discussions/27028
-      GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+    outputs:
+      MC_VERSION: ${{ steps.version.outputs.release }}
     steps:
       - name: Checkout management-center-packaging repo
         uses: actions/checkout@v5
@@ -22,6 +20,7 @@ jobs:
           ref: ${{ inputs.maintenance_branch }}
 
       - name: Get current project version
+        id: project-version
         run: |
           echo "MC_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> ${GITHUB_ENV}
 
@@ -54,3 +53,11 @@ jobs:
         run: |
           git commit --all -m ${{ steps.version.outputs.inc-patch }}
           git push
+
+  build:
+    needs: create_tag
+    uses: ./.github/workflows/publish-mc-packages.yml
+    with:
+      MC_VERSION: ${{ needs.create_tag.outputs.MC_VERSION }}
+      package_types: all
+    secrets: inherit
