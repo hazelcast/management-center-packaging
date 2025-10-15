@@ -22,12 +22,12 @@ jobs:
       - name: Get current project version
         id: project-version
         run: |
-          echo "MC_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> ${GITHUB_ENV}
+          echo "MC_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> ${GITHUB_OUTPUT}
 
       - uses: madhead/semver-utils@latest
         id: version
         with:
-          version: ${{ env.MC_VERSION }}
+          version: ${{ steps.project-version.outputs.MC_VERSION }}
 
       - name: Configure git
         run: |
