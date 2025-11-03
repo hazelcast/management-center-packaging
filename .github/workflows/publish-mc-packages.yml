@@ -5,11 +5,6 @@ on:
     # Push to master updates the latest snapshot (MC_VERSION taken from pom.xml)
     branches:
       - master
-    # Push of a matching tag (v*, e.g. v5.0.2) starts build with
-    # - MC_VERSION extracted from pom.xml
-    # - PACKAGE_VERSION extracted from the tag
-    tags:
-      - 'v*'
   pull_request:
   workflow_dispatch:
     inputs:
@@ -20,13 +15,22 @@ on:
       package_types:
         description: 'Packages to build'
         required: true
-        default: 'all'
         type: choice
         options:
         - all
         - deb
         - rpm
         - homebrew
+  workflow_call:
+    inputs:
+      MC_VERSION:
+        type: string
+        description: 'Version of Hazelcast Management Center to build the image for, this is the Maven version - e.g. 5.0.2 or 5.1.0-SNAPSHOT'
+        required: true
+      package_types:
+        description: 'Packages to build'
+        required: true
+        type: string
 
 env:
   EVENT_NAME: ${{ github.event_name }}
