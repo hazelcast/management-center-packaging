@@ -25,7 +25,7 @@ on:
     inputs:
       MC_VERSION:
         type: string
-        description: 'Version of Hazelcast Management Center to build the image for, this is the Maven version - e.g.: 5.0.2 or 5.1-SNAPSHOT'
+        description: 'Version of Hazelcast Management Center to build the image for, this is the Maven version - e.g. 5.0.2 or 5.1.0-SNAPSHOT'
         required: true
       package_types:
         description: 'Packages to build'
