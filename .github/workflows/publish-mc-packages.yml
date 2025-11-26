@@ -56,7 +56,7 @@ jobs:
       package_types: ${{ inputs.package_types || 'all' }}
     steps:
       - name: Checkout management-center-packaging repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Set MC_VERSION
         id: mc_version
@@ -94,7 +94,7 @@ jobs:
     needs: [prepare]
     steps:
       - name: Checkout management-center-packaging repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Install prerequisites
         run: |
@@ -158,7 +158,7 @@ jobs:
     needs: [prepare]
     steps:
       - name: Checkout management-center-packaging repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Install Required tools
         run: |
@@ -237,7 +237,7 @@ jobs:
     needs: [prepare]
     steps:
       - name: Checkout management-center-packaging repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           path: 'management-center-packaging'
 
@@ -262,7 +262,7 @@ jobs:
           echo "BREW_GIT_REPO_NAME=${BREW_GIT_REPO_NAME}" >> $GITHUB_ENV
 
       - name: Checkout homebrew-hz repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: ${{ env.BREW_GIT_REPO_NAME }}
           ref: master

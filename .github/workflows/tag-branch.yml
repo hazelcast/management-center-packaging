@@ -15,7 +15,7 @@ jobs:
       MC_VERSION: ${{ steps.version.outputs.release }}
     steps:
       - name: Checkout management-center-packaging repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           ref: ${{ inputs.maintenance_branch }}
 
