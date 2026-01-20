@@ -36,11 +36,7 @@ on:
 env:
   EVENT_NAME: ${{ github.event_name }}
   PUBLISH: "true"
-  JFROG_USERNAME: ${{ secrets.JFROG_USERNAME }}
-  JFROG_TOKEN: ${{ secrets.JFROG_TOKEN }}
-  DEVOPS_PRIVATE_KEY: ${{ secrets.DEVOPS_PRIVATE_KEY }}
-  BINTRAY_PASSPHRASE: ${{ secrets.BINTRAY_PASSPHRASE }}
-  HZ_LICENSEKEY: ${{ secrets.HZ_LICENSEKEY }}
+  HZ_LICENSEKEY: ${{ secrets.HAZELCAST_ENTERPRISE_KEY }}
 
 # Constant for now - should ensure single build, maybe we can limit this to something from github.*
 concurrency: single-build
@@ -82,6 +78,8 @@ jobs:
 
   deb:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
     container:
       image: debian:stable
     if: ${{ needs.prepare.outputs.package_types == 'all' || needs.prepare.outputs.package_types == 'deb' }}
@@ -112,24 +110,47 @@ jobs:
           echo "MC_PACKAGE_URL=$MC_PACKAGE_URL" >> $GITHUB_ENV
           curl --silent --fail --location "${MC_PACKAGE_URL}" --output hazelcast-management-center-${MC_VERSION}.tar.gz 
 
+      - uses: hazelcast/docker-actions/get-jfrog-credentials@master
+        id: authenticate-jfrog-write-dev-account
+        with:
+          aws-role-to-assume: ${{ secrets.AWS_HAZELCAST_OIDC_GITHUB_ACTIONS_ROLE_ARN }}
+          jfrog-oidc-provider-name: ${{ github.repository_owner }}-write-dev-account
+
       - name: Create & Upload DEB package
         run: |
           ./build-mc-deb-package.sh
+        env:
+          JFROG_TOKEN: ${{ steps.authenticate-jfrog-write-dev-account.outputs.token }}
 
       - name: Calculate Debian Repository Metadata
         run: |
           source common.sh
 
-          curl --fail-with-body --retry 3 --retry-delay 10 -H "Authorization: Bearer ${{ secrets.JFROG_TOKEN }}" \
+          curl --fail-with-body --retry 3 --retry-delay 10 -H "Authorization: Bearer ${JFROG_TOKEN}" \
             -X POST "https://repository.hazelcast.com/api/deb/reindex/${DEBIAN_REPO}"
+        env:
+          JFROG_TOKEN: ${{ steps.authenticate-jfrog-write-dev-account.outputs.token }}
 
       - name: Install Hazelcast Management Center from DEB
         run: |
           source ./common.sh
+
+          # Setup authentication file to access private repo
+          sudo bash -c "cat >/etc/apt/auth.conf.d/hazelcast.conf <<EOF
+            machine $(echo ${DEBIAN_REPO_BASE_URL} | sed -E 's#https?://([^/]+).*#\1#')
+            login ${JFROG_USER}
+            password ${JFROG_TOKEN}
+          EOF"
+
+          sudo chmod 600 /etc/apt/auth.conf.d/hazelcast.conf
+
           wget -qO - https://repository.hazelcast.com/api/gpg/key/public | gpg --dearmor | sudo tee /usr/share/keyrings/hazelcast-archive-keyring.gpg > /dev/null
           echo "deb [signed-by=/usr/share/keyrings/hazelcast-archive-keyring.gpg] ${DEBIAN_REPO_BASE_URL} ${PACKAGE_REPO} main" | sudo tee -a /etc/apt/sources.list
           sudo apt update && sudo apt install -y hazelcast-management-center=${MC_VERSION}
           /usr/lib/hazelcast-management-center/bin/hz-mc start -Dhazelcast.mc.healthCheck.enable=true > hz-mc.log 2>&1 &
+        env:
+          JFROG_USER: ${{ steps.authenticate-jfrog-write-dev-account.outputs.user }}
+          JFROG_TOKEN: ${{ steps.authenticate-jfrog-write-dev-account.outputs.token }}
 
       - name: Check Hazelcast Management Center Health
         run: |
@@ -144,12 +165,16 @@ jobs:
         if: github.event_name == 'pull_request'
         run: |
           source ./common.sh
-          curl -H "Authorization: Bearer ${{ secrets.JFROG_TOKEN }}" \
+          curl -H "Authorization: Bearer ${JFROG_TOKEN}" \
             -X DELETE \
             "$DEBIAN_REPO_BASE_URL/hazelcast-management-center-${DEB_PACKAGE_VERSION}-all.deb"
+        env:
+          JFROG_TOKEN: ${{ steps.authenticate-jfrog-write-dev-account.outputs.token }}
 
   rpm:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
     if: ${{ needs.prepare.outputs.package_types == 'all' || needs.prepare.outputs.package_types == 'rpm' }}
     container: rockylinux:9
     env:
@@ -175,9 +200,30 @@ jobs:
           echo "MC_PACKAGE_URL=$MC_PACKAGE_URL" >> $GITHUB_ENV
           curl --silent --fail --location "${MC_PACKAGE_URL}" --output hazelcast-management-center-${MC_VERSION}.tar.gz 
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ secrets.AWS_DEV_INFRA_OIDC_GITHUB_ACTIONS_ROLE_ARN }}
+          aws-region: 'us-east-1'
+
+      - name: Get Secrets
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            SIGNING_KEY,SIGNING/GPG-KEY-2011
+          parse-json-secrets: true
+
+      - uses: hazelcast/docker-actions/get-jfrog-credentials@master
+        id: authenticate-jfrog-write-dev-account
+        with:
+          aws-role-to-assume: ${{ secrets.AWS_HAZELCAST_OIDC_GITHUB_ACTIONS_ROLE_ARN }}
+          jfrog-oidc-provider-name: ${{ github.repository_owner }}-write-dev-account
+
       - name: Create & Sign & Upload RPM package
         run: |
           ./build-mc-rpm-package.sh
+        env:
+          JFROG_TOKEN: ${{ steps.authenticate-jfrog-write-dev-account.outputs.token }}
 
       - name: Calculate YUM Repository Metadata
         run: |
@@ -185,8 +231,10 @@ jobs:
           ls -lah
           source ./common.sh
 
-          curl --fail-with-body --retry 3 --retry-delay 10 -H "Authorization: Bearer ${{ secrets.JFROG_TOKEN }}" \
+          curl --fail-with-body --retry 3 --retry-delay 10 -H "Authorization: Bearer ${JFROG_TOKEN}" \
             -X POST "https://repository.hazelcast.com/api/yum/${RPM_REPO}"
+        env:
+          JFROG_TOKEN: ${{ steps.authenticate-jfrog-write-dev-account.outputs.token }}
 
       - name: Install MC from RPM
         run: |
@@ -196,13 +244,16 @@ jobs:
           # Bake authentication into the returned URLs
           wget \
             ${RPM_REPO_BASE_URL}/${PACKAGE_REPO}/hazelcast-rpm-${PACKAGE_REPO}.repo \
-            --header "Authorization: Bearer ${{ env.JFROG_TOKEN }}" \
+            --header "Authorization: Bearer ${JFROG_TOKEN}" \
             --output-document - | \
-          sed "s#https://#https://${{ env.JFROG_USERNAME }}:${{ env.JFROG_TOKEN }}@#g" > \
+          sed "s#https://#https://${JFROG_USER}:${JFROG_TOKEN}@#g" > \
           /etc/yum.repos.d/hazelcast-rpm-${PACKAGE_REPO}.repo
 
           yum install -y hazelcast-management-center-${RPM_MC_VERSION}
           /usr/lib/hazelcast-management-center/bin/hz-mc start -Dhazelcast.mc.healthCheck.enable=true > hz-mc.log 2>&1 &
+        env:
+          JFROG_USER: ${{ steps.authenticate-jfrog-write-dev-account.outputs.user }}
+          JFROG_TOKEN: ${{ steps.authenticate-jfrog-write-dev-account.outputs.token }}
 
       - name: Check MC health
         run: |
@@ -221,9 +272,11 @@ jobs:
         if: github.event_name == 'pull_request'
         run: |
           source ./common.sh
-          curl -H "Authorization: Bearer ${{ secrets.JFROG_TOKEN }}" \
+          curl -H "Authorization: Bearer ${JFROG_TOKEN}" \
             -X DELETE \
             "$RPM_REPO_BASE_URL/${PACKAGE_REPO}/hazelcast-management-center-${RPM_PACKAGE_VERSION}.noarch.rpm"
+        env:
+          JFROG_TOKEN: ${{ steps.authenticate-jfrog-write-dev-account.outputs.token }}
 
   homebrew:
     runs-on: macos-latest
