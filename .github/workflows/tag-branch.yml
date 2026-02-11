@@ -22,7 +22,7 @@ jobs:
       - name: Get current project version
         id: project-version
         run: |
-          echo "MC_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> ${GITHUB_OUTPUT}
+          echo "MC_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout --raw-streams)" >> ${GITHUB_OUTPUT}
 
       - uses: madhead/semver-utils@latest
         id: version
