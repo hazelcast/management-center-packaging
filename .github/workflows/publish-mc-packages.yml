@@ -58,7 +58,7 @@ jobs:
         id: mc_version
         run: |
           if [ -z "${{ env.MC_VERSION }}" ]; then
-            MC_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+            MC_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout --raw-streams)
           fi
           echo "MC_VERSION=$MC_VERSION" >> $GITHUB_ENV
           echo "mc_version=$MC_VERSION" >> $GITHUB_OUTPUT
