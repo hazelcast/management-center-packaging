@@ -57,7 +57,7 @@ jobs:
       - name: Set MC_VERSION
         id: mc_version
         run: |
-          if [ -z "${{ env.MC_VERSION }}" ]; then
+          if [ -z "${MC_VERSION}" ]; then
             MC_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout --raw-streams)
           fi
           echo "MC_VERSION=$MC_VERSION" >> $GITHUB_ENV
@@ -71,7 +71,7 @@ jobs:
           if [[ "${{ github.ref }}" == "refs/tags/v"* ]]; then
             PACKAGE_VERSION=$(echo ${{ github.ref }} | cut -c 12-)
           else
-            PACKAGE_VERSION=${{ env.MC_VERSION }}
+            PACKAGE_VERSION=${MC_VERSION}
           fi
           echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> $GITHUB_ENV
           echo "package_version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
@@ -346,7 +346,7 @@ jobs:
           git config --global user.email 'devops@hazelcast.com'
           git add *rb
           if [[ `git status --porcelain --untracked-files=no` ]]; then
-            git commit -am "Hazelcast Management Center ${{ env.PACKAGE_VERSION }} release"
+            git commit -am "Hazelcast Management Center ${PACKAGE_VERSION} release"
             git pull --rebase
             git push
           else
@@ -362,7 +362,7 @@ jobs:
 
       - name: Run Hazelcast Management Center
         run: |
-          ${{ env.MC_PATH }}/libexec/bin/hz-mc start -Dhazelcast.mc.healthCheck.enable=true > hz-mc.log 2>&1 &
+          ${MC_PATH}/libexec/bin/hz-mc start -Dhazelcast.mc.healthCheck.enable=true > hz-mc.log 2>&1 &
 
       - name: Check Hazelcast Management Center Health
         run: |
