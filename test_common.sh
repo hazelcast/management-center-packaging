@@ -22,7 +22,7 @@ function findScriptDir() {
 }
 
 # Source the latest version of assert.sh unit testing library and include in current shell
-source /dev/stdin <<< "$(curl --silent https://raw.githubusercontent.com/hazelcast/assert.sh/main/assert.sh)"
+source /dev/stdin <<< "$(curl --fail --silent https://raw.githubusercontent.com/hazelcast/assert.sh/main/assert.sh)"
 
 findScriptDir
 
