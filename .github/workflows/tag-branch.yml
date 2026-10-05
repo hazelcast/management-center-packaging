@@ -10,7 +10,7 @@ on:
 
 jobs:
   create_tag:
-    runs-on: ubicloud-standard-2
+    runs-on: ubuntu-latest
     outputs:
       MC_VERSION: ${{ steps.version.outputs.release }}
     steps:
