@@ -24,7 +24,7 @@ jobs:
         run: |
           echo "MC_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout --raw-streams)" >> ${GITHUB_OUTPUT}
 
-      - uses: madhead/semver-utils@4cf918affe9106ea59f86c6250e5ec4570ac4389 # v5.0.0
+      - uses: madhead/semver-utils@092ff2bc46cae343afb90c5efbd606411fc45b49 # v5.1.1
         id: version
         with:
           version: ${{ steps.project-version.outputs.MC_VERSION }}
